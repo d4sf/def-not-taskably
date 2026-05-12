@@ -1,7 +1,7 @@
 {
-  "name": "commander-cli",
+  "name": "def-not-taskably",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple CLI task manager built with Commander.js",
   "main": "index.js",
   "scripts": {
     "test": "vitest"

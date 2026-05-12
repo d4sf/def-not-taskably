@@ -6,6 +6,7 @@ import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { addHandler } from './commands/add.js';
+import { listHandler } from './commands/list.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(
@@ -47,7 +48,7 @@ program
   .option('-v, --verbose', 'enable verbose logging')
   .hook('preAction', (thisCommand, actionCommand) => {
     if (thisCommand.opts().verbose) {
-      process.env.TASKLY_VERBOSE = '1'
+      process.env.TASKLY_VERBOSE = '1';
     }
   });
 
@@ -63,7 +64,7 @@ program
   .command('add <title>')
   .description('Add a new task')
   .option('-p, --priority <level>', 'priority: low, medium, high',
-  validatePriority, 'medium')
+    validatePriority, 'medium')
   .action(async (title, options) => {
     if (title.trim().length === 0) {
       console.error('Task title cannot be empty');
@@ -80,22 +81,9 @@ program
   .description('Show all tasks')
   .option('-a, --all', 'include completed tasks')
   .option('-p, --priority <level>', 'filter by priority')
-  .action(async (options) => {
-    const tasks = await loadTasks();
-    const filtered = tasks
-      .filter((task) => options.all || !task.done)
-      .filter((task) => !options.priority || task.priority === options.priority);
-
-    if (filtered.length === 0) {
-      console.log('No tasks found.');
-      return;
-    }
-
-    for (const task of filtered) {
-      const status = task.done ? '[x]' : '[ ]';
-      console.log(`${status} ${task.id} (${task.priority}) - ${task.title}`);
-    }
-  });
+  .action(async (options) =>
+    listHandler(options, { loadTasks })
+  );
 
 program
   .command('done <id>')
@@ -106,7 +94,7 @@ program
 
     if (!task) {
       console.error(`No task found with id ${id}`);
-      process.exitCode = 1; 
+      process.exitCode = 1;
       return;
     }
 
@@ -127,7 +115,7 @@ program
 
     if (next.length === tasks.length) {
       console.error(`No tasks found with id ${id}`);
-      process.exitCode = 1; 
+      process.exitCode = 1;
       return;
     }
 

@@ -7,12 +7,12 @@ export async function listHandler(options, deps = {}) {
     .filter((task) => !options.priority || task.priority === options.priority);
 
   if (filtered.length === 0) {
-    console.log('No tasks found.');
+    log('No tasks found.');
     return;
   }
 
   for (const task of filtered) {
     const status = task.done ? '[x]' : '[ ]';
-    console.log(`${status} ${task.id} (${task.priority}) - ${task.title}`);
+    log(`${status} ${task.id} (${task.priority}) - ${task.title}`);
   }
 }

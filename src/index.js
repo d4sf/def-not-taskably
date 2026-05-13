@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 import { addHandler } from './commands/add.js';
 import { listHandler } from './commands/list.js';
+import { doneHandler } from './commands/done.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(
@@ -88,22 +89,9 @@ program
 program
   .command('done <id>')
   .description('Mark a task as completed')
-  .action(async (id) => {
-    const tasks = await loadTasks();
-    const task = tasks.find((t) => String(t.id) === id);
-
-    if (!task) {
-      console.error(`No task found with id ${id}`);
-      process.exitCode = 1;
-      return;
-    }
-
-    task.done = true;
-
-    await saveTasks();
-
-    console.log(`Marked as done: ${task.title}`);
-  });
+  .action(async (id) =>
+    doneHandler(id, { loadTasks, saveTasks })
+  );
 
 program
   .command('remove <id>')

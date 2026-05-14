@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { addHandler } from './commands/add.js';
 import { listHandler } from './commands/list.js';
 import { doneHandler } from './commands/done.js';
+import { removeHandler } from './commands/remove.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(
@@ -97,20 +98,9 @@ program
   .command('remove <id>')
   .alias('rm')
   .description('Delete a task')
-  .action(async (id) => {
-    const tasks = await loadTasks();
-    const next = tasks.filter((task) => String(task.id) !== id);
-
-    if (next.length === tasks.length) {
-      console.error(`No tasks found with id ${id}`);
-      process.exitCode = 1;
-      return;
-    }
-
-    await saveTasks(next);
-
-    console.log(`Removed task ${id}`);
-  });
+  .action(async (id) =>
+    removeHandler(id, { loadTasks, saveTasks })
+  );
 
 try {
   await program.parseAsync(process.argv);

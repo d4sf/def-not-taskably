@@ -1,4 +1,4 @@
-import { describe, it, expectFailure, vi, expect } from "vitest";
+import { describe, it, vi, expect } from "vitest";
 import { doneHandler } from "./done.js";
 
 const tasks = [

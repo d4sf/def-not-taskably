@@ -4,7 +4,8 @@
   "description": "A simple CLI task manager built with Commander.js",
   "main": "index.js",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "bin": {
     "taskly": "./src/index.js"
@@ -22,6 +23,8 @@
     "inquirer": "^13.4.3"
   },
   "devDependencies": {
+    "@types/node": "^25.7.0",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.6"
   }
 }

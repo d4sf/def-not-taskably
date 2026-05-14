@@ -1,5 +1,5 @@
-export async function removeHandler(id, deps) {
-  const { loadTasks = defaultLoad, saveTasks = defaultSave, log = console.log } = deps;
+export async function removeHandler(id: string, deps: any = {}) {
+  const { loadTasks, saveTasks, log = console.log } = deps;
   const tasks = await loadTasks();
   const next = tasks.filter((task) => String(task.id) !== id);
 

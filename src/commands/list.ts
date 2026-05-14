@@ -1,5 +1,5 @@
-export async function listHandler(options, deps = {}) {
-  const { loadTasks = defaultLoad, log = console.log } = deps;
+export async function listHandler(options: any, deps: any = {}) {
+  const { loadTasks, log = console.log } = deps;
   const tasks = await loadTasks();
 
   const filtered = tasks

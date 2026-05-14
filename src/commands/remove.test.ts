@@ -30,7 +30,7 @@ describe('remove command', () => {
   it('exits with error when task not found', async () => {
     const saveTasks = vi.fn();
     const log = vi.fn();
-    const processExitSpy = vi.spyOn(process, 'exit').mockImplementation(() => { });
+    const processExitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
     await removeHandler("999", {
       loadTasks: async () => tasks,

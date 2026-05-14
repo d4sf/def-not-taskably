@@ -1,5 +1,5 @@
-export async function addHandler(title, options, deps = {}) {
-  const { loadTasks = defaultLoad, saveTasks = defaultSave, log = console.log } = deps;
+export async function addHandler(title: string, options: any, deps: any = {}) {
+  const { loadTasks , saveTasks, log = console.log } = deps;
   const tasks = await loadTasks();
 
   tasks.push({ id: Date.now(), title, priority: options.priority, done: false });

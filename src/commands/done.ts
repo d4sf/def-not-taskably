@@ -1,5 +1,5 @@
-export async function doneHandler(id, deps = {}) {
-  const { loadTasks = defaultLoad, saveTasks = defaultSave, log = console.log } = deps;
+export async function doneHandler(id: string, deps: any = {}) {
+  const { loadTasks, saveTasks, log = console.log } = deps;
   const tasks = await loadTasks();
   const task = tasks.find((t) => String(t.id) === id);
 

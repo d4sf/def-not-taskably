@@ -1,4 +1,12 @@
+# modulos
 node_modules/
+
+# temporal savedata
 .taskly.json
+
+# agents,  etc
 AGENTS.md
 opencode.json
+
+# Compilación de TypeScript
+dist/

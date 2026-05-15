@@ -1,4 +1,9 @@
-export async function doneHandler(id: string, deps: any = {}) {
+import { Task, HandlerDeps } from '../types.js';
+
+export async function doneHandler(
+  id: string,
+  deps: HandlerDeps
+) {
   const { loadTasks, saveTasks, log = console.log } = deps;
   const tasks = await loadTasks();
   const task = tasks.find((t) => String(t.id) === id);
@@ -9,9 +14,9 @@ export async function doneHandler(id: string, deps: any = {}) {
     return;
   }
 
-  task.done  = true;
+  task.done = true;
 
-  await saveTasks(tasks);
+  await saveTasks!(tasks);
 
   log(`Marked as done: ${task.title}`);
 }

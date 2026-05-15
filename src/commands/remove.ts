@@ -1,4 +1,9 @@
-export async function removeHandler(id: string, deps: any = {}) {
+import { Task, HandlerDeps } from '../types.js';
+
+export async function removeHandler(
+  id: string,
+  deps: HandlerDeps
+) {
   const { loadTasks, saveTasks, log = console.log } = deps;
   const tasks = await loadTasks();
   const next = tasks.filter((task) => String(task.id) !== id);
@@ -9,7 +14,7 @@ export async function removeHandler(id: string, deps: any = {}) {
     return;
   }
 
-  await saveTasks(next);
+  await saveTasks!(next);
 
   log(`Removed task ${id}`);
 }

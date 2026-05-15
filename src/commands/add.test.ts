@@ -3,7 +3,7 @@ import { addHandler } from "./add.js";
 
 describe('add command', () => {
   it('appends a new task with the given priority', async () => {
-    const existing = [{ id: 1, title: 'old', priority: 'low', done: false }];
+    const existing = [{ id: 1, title: 'old', priority: 'low' as const, done: false }];
     const saveTasks = vi.fn();
     const log = vi.fn();
 

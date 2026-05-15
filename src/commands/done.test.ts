@@ -1,10 +1,11 @@
 import { describe, it, vi, expect } from "vitest";
 import { doneHandler } from "./done.js";
+import { Task } from "../types.js";
 
 const tasks = [
-  { id: 1, title: 'Task One', priority: 'high', done: false },
-  { id: 2, title: 'Task Two', priority: 'low', done: true },
-  { id: 3, title: 'Task Three', priority: 'high', done: false },
+  { id: 1, title: 'Task One', priority: 'high' as const, done: false },
+  { id: 2, title: 'Task Two', priority: 'low' as const, done: true },
+  { id: 3, title: 'Task Three', priority: 'high' as const, done: false },
 ];
 
 describe('done command', () => {
@@ -22,7 +23,7 @@ describe('done command', () => {
     expect(log.mock.calls[0][0]).toContain('Marked as done: Task One');
 
     const saved = saveTasks.mock.calls[0][0];
-    const updated = saved.find (t => t.id === 1);
+    const updated = saved.find ((t: Task) => t.id === 1);
 
     expect (updated.done).toBe(true);
   });
@@ -30,7 +31,7 @@ describe('done command', () => {
   it('exits with error when task not found', async () => {
     const saveTasks = vi.fn();
     const log = vi.fn()
-    const processExitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {});
+    const processExitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
     await doneHandler("999", {
       loadTasks: async () => tasks,

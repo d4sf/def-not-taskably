@@ -2,7 +2,7 @@
 
 import { Command } from 'commander';
 import { readFile, writeFile } from 'node:fs/promises';
-import { resolve, dirname, join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { addHandler } from './commands/add.js';
@@ -10,37 +10,13 @@ import { listHandler } from './commands/list.js';
 import { doneHandler } from './commands/done.js';
 import { removeHandler } from './commands/remove.js'
 
+import { loadTasks, saveTasks, validatePriority } from './tools/index.js';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(
   await readFile(join(__dirname, '..', 'package.json'), 'utf8')
 );
-const TASK_FILE = resolve(process.cwd(), '.taskly.json');
 const program = new Command();
-
-async function loadTasks() {
-  try {
-    const data = await readFile(TASK_FILE, 'utf-8');
-
-    return JSON.parse(data);
-  } catch (error) {
-    if (error.code === 'ENOENT') return [];
-    throw error;
-  }
-}
-
-function validatePriority(value) {
-  const allowed = ['low', 'medium', 'high'];
-
-  if (!allowed.includes(value)) {
-    throw new Error(`Priority must be one of: ${allowed.join(', ')}`);
-  }
-
-  return value;
-}
-
-async function saveTasks(tasks) {
-  await writeFile(TASK_FILE, JSON.stringify(tasks, null, 2));
-}
 
 program.version(pkg.version);
 
@@ -75,7 +51,7 @@ program
       return;
     }
 
-    addHandler(title, options, { loadTasks, saveTasks });
+    addHandler(title, options, { loadTasks, saveTasks, log: console.log });
   });
 
 program
@@ -84,14 +60,14 @@ program
   .option('-a, --all', 'include completed tasks')
   .option('-p, --priority <level>', 'filter by priority')
   .action(async (options) =>
-    listHandler(options, { loadTasks })
+    listHandler(options, { loadTasks, log: console.log })
   );
 
 program
   .command('done <id>')
   .description('Mark a task as completed')
   .action(async (id) =>
-    doneHandler(id, { loadTasks, saveTasks })
+    doneHandler(id, { loadTasks, saveTasks, log: console.log })
   );
 
 program
@@ -99,12 +75,14 @@ program
   .alias('rm')
   .description('Delete a task')
   .action(async (id) =>
-    removeHandler(id, { loadTasks, saveTasks })
+    removeHandler(id, { loadTasks, saveTasks, log: console.log })
   );
 
 try {
   await program.parseAsync(process.argv);
-} catch (err) {
-  console.error(`Error: ${err.message}`);
-  process.exitCode = 1;
+} catch (error: unknown) {
+  if (error instanceof Error) {
+    console.error(`Error: ${error.message}`);
+    process.exitCode = 1;
+  }
 }

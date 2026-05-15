@@ -2,9 +2,9 @@ import { describe, it, expect, vi } from "vitest";
 import { listHandler } from "./list.js";
 
 const tasks = [
-  { id: 1, title: 'Task One', priority: 'high', done: false },
-  { id: 2, title: 'Task Two', priority: 'low', done: true },
-  { id: 3, title: 'Task Three', priority: 'high', done: false },
+  { id: 1, title: 'Task One', priority: 'high' as const, done: false },
+  { id: 2, title: 'Task Two', priority: 'low' as const, done: true },
+  { id: 3, title: 'Task Three', priority: 'high' as const, done: false },
 ];
 
 describe('list command', () => {

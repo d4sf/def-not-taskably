@@ -1,8 +1,8 @@
-import { Task, HandlerDeps } from '../types.js';
+import { Task, RemoveHandlerDeps } from '../types.js';
 
 export async function removeHandler(
   id: string,
-  deps: HandlerDeps
+  deps: RemoveHandlerDeps
 ) {
   const { loadTasks, saveTasks, log = console.log } = deps;
   const tasks = await loadTasks();

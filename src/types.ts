@@ -17,13 +17,18 @@ export interface AddOptions {
 }
 
 export interface HandlerDeps {
-  loadTasks: () => Promise<Task[]>;
-  saveTasks?: (tasks: Task[]) => Promise<void>;
   log?: (message: string) => void;
 }
 
-export interface HandlerDepsOptional {
-  loadTasks?: () => Promise<Task[]>;
-  saveTasks?: (tasks: Task[]) => Promise<void>;
-  log?: (message: string) => void;
+export interface AddHandlerDeps extends HandlerDeps {
+  loadTasks: () => Promise<Task[]>;
+  saveTasks: (tasks: Task[]) => Promise<void>;
+}
+
+export interface RemoveHandlerDeps extends AddHandlerDeps {}
+
+export interface DoneHandlerDeps extends AddHandlerDeps {}
+
+export interface ListHandlerDeps extends HandlerDeps {
+  loadTasks: () => Promise<Task[]>;
 }

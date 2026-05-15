@@ -10,7 +10,7 @@ export async function loadTasks(): Promise<Task[]> {
 
     return JSON.parse(data);
   } catch (error) {
-    if (error.code === 'ENOENT') return [];
+    if (error instanceof Error && (error as { code?: string }).code === 'ENOENT') return [];
     throw error;
   }
 }

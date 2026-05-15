@@ -1,5 +1,6 @@
 import { describe, it, vi, expect } from "vitest";
 import { doneHandler } from "./done.js";
+import { Task } from "../types.js";
 
 const tasks = [
   { id: 1, title: 'Task One', priority: 'high' as const, done: false },
@@ -22,7 +23,7 @@ describe('done command', () => {
     expect(log.mock.calls[0][0]).toContain('Marked as done: Task One');
 
     const saved = saveTasks.mock.calls[0][0];
-    const updated = saved.find (t => t.id === 1);
+    const updated = saved.find ((t: Task) => t.id === 1);
 
     expect (updated.done).toBe(true);
   });

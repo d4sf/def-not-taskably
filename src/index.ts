@@ -80,7 +80,9 @@ program
 
 try {
   await program.parseAsync(process.argv);
-} catch (err) {
-  console.error(`Error: ${err.message}`);
-  process.exitCode = 1;
+} catch (error: unknown) {
+  if (error instanceof Error) {
+    console.error(`Error: ${error.message}`);
+    process.exitCode = 1;
+  }
 }

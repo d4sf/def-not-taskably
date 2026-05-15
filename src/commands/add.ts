@@ -1,9 +1,9 @@
-import { HandlerDeps, AddOptions } from '../types.js';
+import { AddHandlerDeps, AddOptions } from '../types.js';
 
 export async function addHandler(
   title: string,
   options: AddOptions,
-  deps: HandlerDeps
+  deps: AddHandlerDeps
 ) {
   const { loadTasks, saveTasks, log = console.log } = deps;
 

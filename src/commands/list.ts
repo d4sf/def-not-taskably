@@ -1,8 +1,8 @@
-import { Task, ListOptions, HandlerDeps } from '../types.js';
+import { ListOptions, ListHandlerDeps } from '../types.js';
 
 export async function listHandler(
   options: ListOptions,
-  deps: HandlerDeps
+  deps: ListHandlerDeps
 ) {
   const { loadTasks, log = console.log } = deps;
   const tasks = await loadTasks();

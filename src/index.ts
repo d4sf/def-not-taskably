@@ -10,6 +10,7 @@ import { listHandler } from './commands/list.js';
 import { doneHandler } from './commands/done.js';
 import { removeHandler } from './commands/remove.js'
 import { undoneHandler } from './commands/undone.js';
+import { editHandler } from './commands/edit.js';
 
 import { loadTasks, saveTasks, validatePriority } from './tools/index.js';
 
@@ -85,6 +86,16 @@ program
   .description('Mark a task as not completed')
   .action(async (id) =>
     undoneHandler(id, { loadTasks, saveTasks, log: console.log })
+  );
+
+program
+  .command('edit <id>')
+  .alias('update')
+  .description('Edit a task')
+  .option('-t, --title <value>', 'new title')
+  .option('-p, --priority <level>', 'priority: low, medium, high', validatePriority)
+  .action(async (id, options) =>
+    editHandler(id, options, { loadTasks, saveTasks, log: console.log })
   );
 
 try {

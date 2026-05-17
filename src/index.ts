@@ -9,6 +9,7 @@ import { addHandler } from './commands/add.js';
 import { listHandler } from './commands/list.js';
 import { doneHandler } from './commands/done.js';
 import { removeHandler } from './commands/remove.js'
+import { undoneHandler } from './commands/undone.js';
 
 import { loadTasks, saveTasks, validatePriority } from './tools/index.js';
 
@@ -76,6 +77,14 @@ program
   .description('Delete a task')
   .action(async (id) =>
     removeHandler(id, { loadTasks, saveTasks, log: console.log })
+  );
+
+program
+  .command('undone <id>')
+  .alias('ud')
+  .description('Mark a task as not completed')
+  .action(async (id) =>
+    undoneHandler(id, { loadTasks, saveTasks, log: console.log })
   );
 
 try {

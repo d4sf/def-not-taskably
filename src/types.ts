@@ -29,6 +29,8 @@ export interface RemoveHandlerDeps extends AddHandlerDeps {}
 
 export interface DoneHandlerDeps extends AddHandlerDeps {}
 
+export interface UndoneHandlerDeps extends AddHandlerDeps {}
+
 export interface ListHandlerDeps extends HandlerDeps {
   loadTasks: () => Promise<Task[]>;
 }

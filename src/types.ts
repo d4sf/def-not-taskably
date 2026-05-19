@@ -41,3 +41,15 @@ export interface EditHandlerDeps extends AddHandlerDeps {}
 export interface ListHandlerDeps extends HandlerDeps {
   loadTasks: () => Promise<Task[]>;
 }
+
+export interface SearchOptions {
+  query: string;
+  title?: boolean;
+  id?: boolean;
+  priority?: Priority;
+  caseSensitive?: boolean;
+}
+
+export interface SearchHandlerDeps extends HandlerDeps {
+  loadTasks: () => Promise<Task[]>;
+}

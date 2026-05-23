@@ -2,10 +2,10 @@ import { describe, it, expect, vi } from "vitest";
 import { searchHandler } from "./search.js";
 
 const tasks = [
-  { id: 169999991, title: 'Task One', priority: 'high' as const, done: false },
-  { id: 169999992, title: 'Task Two', priority: 'low' as const, done: true },
-  { id: 169999993, title: 'Task Three', priority: 'high' as const, done: false },
-  { id: 169999994, title: 'Buy Milk', priority: 'medium' as const, done: false },
+  { id: 169999991, title: 'Task One', description: '', priority: 'high' as const, done: false },
+  { id: 169999992, title: 'Task Two', description: '', priority: 'low' as const, done: true },
+  { id: 169999993, title: 'Task Three', description: '', priority: 'high' as const, done: false },
+  { id: 169999994, title: 'Buy Milk', description: '', priority: 'medium' as const, done: false },
 ];
 
 describe('search command', () => {
@@ -104,6 +104,36 @@ describe('search command', () => {
     });
 
     expect(log).toHaveBeenCalledWith('Error: -i flag cannot be combined with -t or -p');
+  });
+
+  it('searches by description text (default search)', async () => {
+    const log = vi.fn();
+    const tasksWithDesc = [
+      { id: 1, title: 'Chore', description: 'buy groceries', priority: 'low' as const, done: false },
+      { id: 2, title: 'Errand', description: 'pick up dry cleaning', priority: 'medium' as const, done: false },
+    ];
+
+    await searchHandler({ query: 'groceries' }, {
+      loadTasks: async () => tasksWithDesc,
+      log
+    });
+
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log.mock.calls[0][0]).toContain('buy groceries');
+  });
+
+  it('searches by description case-insensitively', async () => {
+    const log = vi.fn();
+    const tasksWithDesc = [
+      { id: 1, title: 'Chore', description: 'Buy Groceries', priority: 'low' as const, done: false },
+    ];
+
+    await searchHandler({ query: 'groceries' }, {
+      loadTasks: async () => tasksWithDesc,
+      log
+    });
+
+    expect(log).toHaveBeenCalledTimes(1);
   });
 
   it('shows message when no tasks found', async () => {

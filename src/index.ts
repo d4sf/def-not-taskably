@@ -44,6 +44,7 @@ program.addHelpText('after', `
 program
   .command('add <title>')
   .description('Add a new task')
+  .option('-d, --description <text>', 'description of the task')
   .option('-p, --priority <level>', 'priority: low, medium, high',
     validatePriority, 'medium')
   .action(async (title, options) => {
@@ -94,6 +95,7 @@ program
   .alias('update')
   .description('Edit a task')
   .option('-t, --title <value>', 'new title')
+  .option('-d, --description <text>', 'new description')
   .option('-p, --priority <level>', 'priority: low, medium, high', validatePriority)
   .action(async (id, options) =>
     editHandler(id, options, { loadTasks, saveTasks, log: console.log })

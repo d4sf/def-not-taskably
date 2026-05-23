@@ -19,5 +19,11 @@ export async function listHandler(
   for (const task of filtered) {
     const status = task.done ? '[x]' : '[ ]';
     log(`${status} ${task.id} (${task.priority}) - ${task.title}`);
+    if (task.description) {
+      const truncated = task.description.length > 40
+        ? task.description.slice(0, 37) + '...'
+        : task.description;
+      log(`   ${truncated}`);
+    }
   }
 }

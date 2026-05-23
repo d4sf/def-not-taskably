@@ -9,7 +9,7 @@ export async function addHandler(
 
   const tasks = await loadTasks();
 
-  tasks.push({ id: Date.now(), title, priority: options.priority, done: false });
+  tasks.push({ id: Date.now(), title, description: options.description ?? '', priority: options.priority, done: false });
 
   await saveTasks(tasks);
 

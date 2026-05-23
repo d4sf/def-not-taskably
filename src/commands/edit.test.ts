@@ -3,9 +3,9 @@ import { editHandler } from "./edit.js";
 import { Task } from "../types.js";
 
 const tasks = [
-  { id: 1, title: 'Task One', priority: 'high' as const, done: false },
-  { id: 2, title: 'Task Two', priority: 'low' as const, done: true },
-  { id: 3, title: 'Task Three', priority: 'high' as const, done: false },
+  { id: 1, title: 'Task One', description: '', priority: 'high' as const, done: false },
+  { id: 2, title: 'Task Two', description: '', priority: 'low' as const, done: true },
+  { id: 3, title: 'Task Three', description: '', priority: 'high' as const, done: false },
 ];
 
 describe('edit command', () => {
@@ -75,6 +75,56 @@ describe('edit command', () => {
     const processExitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
     await editHandler("999", { title: 'New Title' }, {
+      loadTasks: async () => tasks,
+      saveTasks,
+      log
+    });
+
+    expect(processExitSpy).toHaveBeenCalledWith(1);
+    expect(saveTasks).not.toHaveBeenCalled();
+
+    processExitSpy.mockRestore();
+  });
+
+  it('edit task description', async () => {
+    const log = vi.fn();
+    const saveTasks = vi.fn();
+
+    await editHandler("1", { description: 'New description' }, {
+      loadTasks: async () => tasks,
+      saveTasks,
+      log
+    });
+
+    expect(log).toHaveBeenCalledOnce();
+    expect(log.mock.calls[0][0]).toContain('Updated description for task 1');
+
+    const saved = saveTasks.mock.calls[0][0];
+    const updated = saved.find((t: Task) => t.id === 1);
+
+    expect(updated.description).toBe('New description');
+  });
+
+  it('edit both description and priority', async () => {
+    const log = vi.fn();
+    const saveTasks = vi.fn();
+
+    await editHandler("3", { description: 'Updated desc', priority: 'low' as const }, {
+      loadTasks: async () => tasks,
+      saveTasks,
+      log
+    });
+
+    expect(log).toHaveBeenCalledOnce();
+    expect(log.mock.calls[0][0]).toContain('Updated description and priority for task 3');
+  });
+
+  it('exits with error when description is empty', async () => {
+    const saveTasks = vi.fn();
+    const log = vi.fn();
+    const processExitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+
+    await editHandler("1", { description: '   ' }, {
       loadTasks: async () => tasks,
       saveTasks,
       log

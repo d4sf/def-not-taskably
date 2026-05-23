@@ -25,10 +25,11 @@ export async function searchHandler(
     
     if (useTitleSearch) {
       filtered = filtered.filter(task => {
-        const titleMatch = caseSensitive
-          ? task.title.includes(query)
-          : task.title.toLowerCase().includes(query.toLowerCase());
-        return titleMatch;
+        const match = caseSensitive
+          ? task.title.includes(query) || task.description.includes(query)
+          : task.title.toLowerCase().includes(query.toLowerCase()) || task.description.toLowerCase().includes(query.toLowerCase());
+        
+        return match;
       });
     }
 
@@ -44,6 +45,6 @@ export async function searchHandler(
 
   for (const task of filtered) {
     const status = task.done ? '[x]' : '[ ]';
-    log(`${status} ${task.id} (${task.priority}) - ${task.title}`);
+    log(`${status} ${task.id} (${task.priority}) - ${task.title} - ${task.description}`);
   }
 }

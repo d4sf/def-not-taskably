@@ -7,8 +7,9 @@ const TASK_FILE = resolve(process.cwd(), '.taskly.json');
 export async function loadTasks(): Promise<Task[]> {
   try {
     const data = await readFile(TASK_FILE, 'utf-8');
+    const tasks = JSON.parse(data) as any[];
 
-    return JSON.parse(data);
+    return tasks.map(t => ({ description: '', ...t })) as Task[];
   } catch (error) {
     if (error instanceof Error && (error as { code?: string }).code === 'ENOENT') return [];
     throw error;

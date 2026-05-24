@@ -10,7 +10,9 @@ describe('add command', () => {
     await addHandler('new task', { priority: 'high' }, {
       loadTasks: async () => existing,
       saveTasks,
-      log
+      log,
+      inputPrompt: vi.fn(),
+      selectPrompt: vi.fn()
     });
 
     expect(saveTasks).toHaveBeenCalledOnce();
@@ -31,7 +33,9 @@ describe('add command', () => {
     await addHandler('new task', { priority: 'high', description: 'a detailed task' }, {
       loadTasks: async () => existing,
       saveTasks,
-      log
+      log,
+      inputPrompt: vi.fn(),
+      selectPrompt: vi.fn()
     });
 
     expect(saveTasks).toHaveBeenCalledOnce();
@@ -39,6 +43,6 @@ describe('add command', () => {
     const saved = saveTasks.mock.calls[0][0]
 
     expect(saved[1].description).toBe('a detailed task');
-    expect(log).toHaveBeenCalledWith('Added: new task');
+    expect(log).toHaveBeenCalledWith('Added: new task - a detailed task');
   });
 });

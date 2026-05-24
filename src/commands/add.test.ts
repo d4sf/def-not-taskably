@@ -45,4 +45,28 @@ describe('add command', () => {
     expect(saved[1].description).toBe('a detailed task');
     expect(log).toHaveBeenCalledWith('Added: new task - a detailed task');
   });
+
+  it('appends a new task with default priority medium when not provided', async () => {
+    const existing = [{ id: 1, title: 'old', description: '', priority: 'low' as const, done: false }];
+    const saveTasks = vi.fn();
+    const log = vi.fn();
+
+    await addHandler('new task', {}, {
+      loadTasks: async () => existing,
+      saveTasks,
+      log,
+      inputPrompt: vi.fn(),
+      selectPrompt: vi.fn()
+    });
+
+    expect(saveTasks).toHaveBeenCalledOnce();
+
+    const saved = saveTasks.mock.calls[0][0]
+
+    expect(saved).toHaveLength(2);
+    expect(saved[1].title).toBe('new task');
+    expect(saved[1].priority).toBe('medium');
+    expect(saved[1].description).toBe('');
+    expect(log).toHaveBeenCalledWith('Added: new task');
+  });
 });

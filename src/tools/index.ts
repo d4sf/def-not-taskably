@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { readFile, writeFile } from 'node:fs/promises';
-import { Task, Priority } from '../types.js';
+import { Task, Priority, PriorityPromptChoice } from '../types.js';
 
 const TASK_FILE = resolve(process.cwd(), '.taskly.json');
 
@@ -50,3 +50,21 @@ export function validatePriority(value: string): Priority {
 
   return value as Priority;
 }
+
+export const priorityPromptChoices: PriorityPromptChoice[] = [
+  {
+    name: 'High',
+    value: 'high',
+    description: 'A very important task.',
+  },
+  {
+    name: 'Medium',
+    value: 'medium',
+    description: 'A normal task.',
+  },
+  {
+    name: 'Low',
+    value: 'low',
+    description: 'A not so relevant task.'
+  },
+];

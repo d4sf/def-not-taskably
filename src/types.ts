@@ -1,4 +1,8 @@
+import type { input, select } from '@inquirer/prompts';
+
 export type Priority = 'low' | 'medium' | 'high';
+export type InputPromptFunction = typeof input;
+export type SelectPromptFunction = typeof select;
 
 export interface Task {
   id: number;
@@ -11,6 +15,12 @@ export interface Task {
 export interface ListOptions {
   all?: boolean;
   priority?: Priority;
+}
+
+export interface PriorityPromptChoice {
+  name:  string;
+  value: Priority;
+  description: string
 }
 
 export type AddOptions = Pick<Task, 'priority'> & Partial<Pick<Task, 'description'>>;
@@ -31,12 +41,17 @@ export interface TaskWriteDeps extends TaskReadDeps {
 }
 
 /** Concrete definitions inheriting from base capabilities */
-export interface AddHandlerDeps extends TaskWriteDeps {}
+export interface AddHandlerDeps extends TaskWriteDeps {
+  inputPrompt: InputPromptFunction,
+  selectPrompt: SelectPromptFunction,
+}
+
 export interface RemoveHandlerDeps extends TaskWriteDeps {}
 export interface DoneHandlerDeps extends TaskWriteDeps {}
 export interface UndoneHandlerDeps extends TaskWriteDeps {}
 export interface EditHandlerDeps extends TaskWriteDeps {}
 export interface ListHandlerDeps extends TaskReadDeps {}
+export interface SearchHandlerDeps extends TaskReadDeps {}
 
 export interface SearchOptions {
   query: string;
@@ -45,5 +60,3 @@ export interface SearchOptions {
   priority?: Priority;
   caseSensitive?: boolean;
 }
-
-export interface SearchHandlerDeps extends TaskReadDeps {}

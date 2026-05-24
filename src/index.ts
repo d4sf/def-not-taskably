@@ -5,6 +5,8 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { input, select } from '@inquirer/prompts';
+
 import { addHandler } from './commands/add.js';
 import { listHandler } from './commands/list.js';
 import { doneHandler } from './commands/done.js';
@@ -42,20 +44,13 @@ program.addHelpText('after', `
   `);
 
 program
-  .command('add <title>')
+  .command('add [title]')
   .description('Add a new task')
   .option('-d, --description <text>', 'description of the task')
-  .option('-p, --priority <level>', 'priority: low, medium, high',
-    validatePriority, 'medium')
+  .option('-p, --priority [level]', 'priority: low, medium, high',
+    validatePriority)
   .action(async (title, options) => {
-    if (title.trim().length === 0) {
-      console.error('Task title cannot be empty');
-
-      process.exitCode = 1;
-      return;
-    }
-
-    addHandler(title, options, { loadTasks, saveTasks, log: console.log });
+    addHandler(title, options, { loadTasks, saveTasks, log: console.log, inputPrompt: input, selectPrompt: select });
   });
 
 program

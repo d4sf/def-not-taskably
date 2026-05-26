@@ -14,6 +14,7 @@ import { removeHandler } from './commands/remove.js'
 import { undoneHandler } from './commands/undone.js';
 import { editHandler } from './commands/edit.js';
 import { searchHandler } from './commands/search.js';
+import { showHandler } from './commands/show.js';
 
 import { loadTasks, saveTasks, validatePriority } from './tools/index.js';
 
@@ -107,6 +108,14 @@ program
   .option('-c, --case-sensitive', 'enable case-sensitive title search')
   .action(async (query, options) =>
     searchHandler({ query, ...options }, { loadTasks, log: console.log })
+  );
+
+program
+  .command('show <id>')
+  .alias('sh')
+  .description('Show task details')
+  .action(async (id) =>
+    showHandler(id, { loadTasks, log: console.log })
   );
 
 try {

@@ -52,6 +52,7 @@ export interface UndoneHandlerDeps extends TaskWriteDeps {}
 export interface EditHandlerDeps extends TaskWriteDeps {}
 export interface ListHandlerDeps extends TaskReadDeps {}
 export interface SearchHandlerDeps extends TaskReadDeps {}
+export interface ShowHandlerDeps extends TaskReadDeps {}
 
 export interface SearchOptions {
   query: string;

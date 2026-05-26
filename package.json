@@ -20,7 +20,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20.12.0"
   },
   "keywords": ["cli", "task-manager", "todo"],
   "author": "",

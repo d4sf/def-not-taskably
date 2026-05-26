@@ -27,21 +27,21 @@ const program = new Command();
 program.version(pkg.version);
 
 program
-  .name('taskly')
+  .name('dnt')
   .description('A small CLI for managing local task lists')
   .option('-v, --verbose', 'enable verbose logging')
   .hook('preAction', (thisCommand, actionCommand) => {
     if (thisCommand.opts().verbose) {
-      process.env.TASKLY_VERBOSE = '1';
+      process.env.DNT_VERBOSE = '1';
     }
   });
 
 program.addHelpText('after', `
     Examples:
-    $ taskly add "Write tests" --priority high
-    $ taskly list --all
-    $ taskly done 169999999
-    $ taskly rm 169999999
+    $ dnt add "Write tests" --priority high
+    $ dnt list --all
+    $ dnt done 169999999
+    $ dnt rm 169999999
   `);
 
 program
@@ -101,7 +101,7 @@ program
   .command('search <query>')
   .alias('s')
   .description('Search tasks by title, id, or priority')
-  .usage('taskly search <query> [-t] [-i] [-p <level>] [-c]')
+  .usage('dnt search <query> [-t] [-i] [-p <level>] [-c]')
   .option('-t, --title', 'search by title (default)')
   .option('-i, --id', 'search by id (cannot be combined with -t or -p)')
   .option('-p, --priority <level>', 'search by priority (low, medium, high)', validatePriority)

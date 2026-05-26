@@ -1,23 +1,28 @@
 {
-  "name": "def-not-taskably",
-  "version": "1.0.0",
+  "name": "dnt",
+  "version": "1.0.1",
   "description": "A simple CLI task manager built with Commander.js",
-  "main": "src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/types.d.ts",
   "scripts": {
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "dev": "tsx src/index.ts",
     "build": "rm -rf dist && tsc",
     "watch": "tsc -w",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "prepare": "npm run build"
   },
   "bin": {
-    "taskly": "./dist/index.js"
+    "dnt": "./dist/index.js"
   },
   "files": [
-    "src"
+    "dist"
   ],
-  "keywords": [],
+  "engines": {
+    "node": ">=20.12.0"
+  },
+  "keywords": ["cli", "task-manager", "todo"],
   "author": "",
   "license": "ISC",
   "type": "module",

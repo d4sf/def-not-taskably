@@ -1,36 +1,59 @@
-# Taskly
+# dnt
 
 A simple CLI task manager built with Commander.js.
 
 ## Installation
 
 ```bash
-npm install
+npm install -g dnt
 ```
 
 ## Usage
 
 Add a task:
 ```bash
-taskly add "Buy groceries" --priority high
+dnt add "Buy groceries" --priority high
 ```
 
 List tasks:
 ```bash
-taskly list
-taskly list --all      # include completed tasks
-taskly list --priority high
+dnt list
+dnt list --all            # include completed tasks
+dnt list --priority high
 ```
 
-Mark task as done:
+Show task details:
 ```bash
-taskly done <id>
+dnt show <id>
+dnt sh <id>
+```
+
+Mark task as done / not done:
+```bash
+dnt done <id>
+dnt undone <id>
+dnt ud <id>
+```
+
+Edit a task:
+```bash
+dnt edit <id> --title "New title" --priority low
+dnt update <id> --description "Updated description"
 ```
 
 Remove a task:
 ```bash
-taskly remove <id>
-taskly rm <id>
+dnt remove <id>
+dnt rm <id>
+```
+
+Search tasks:
+```bash
+dnt search <query>
+dnt s <query>
+dnt search <query> --priority high
+dnt search <query> --case-sensitive
+dnt search <id> --id
 ```
 
 ## Options
@@ -39,10 +62,16 @@ taskly rm <id>
 
 ## Commands
 
-- `add <title>` - Add a new task
-- `list` - Show all tasks
-- `done <id>` - Mark a task as completed
-- `remove <id>` - Delete a task (alias: `rm`)
+| Command | Alias | Description |
+|---|---|---|
+| `add <title>` | | Add a new task |
+| `list` | | Show all tasks |
+| `show <id>` | `sh` | Show task details |
+| `done <id>` | | Mark a task as completed |
+| `undone <id>` | `ud` | Mark a task as not completed |
+| `edit <id>` | `update` | Edit a task |
+| `remove <id>` | `rm` | Delete a task |
+| `search <query>` | `s` | Search tasks |
 
 ## Priority Levels
 

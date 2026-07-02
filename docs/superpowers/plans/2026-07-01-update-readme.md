@@ -1,3 +1,25 @@
+# Update README Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Rewrite README.md to reflect the new ticket system: grouped commands under `dnt ticket <>`, new `status` and `dueby` fields, removed `done`/`undone` commands, and storage in `magnetar.json`.
+
+**Architecture:** Single file update — README.md. Read the current file, replace all sections to match the current CLI.
+
+**Tech Stack:** Markdown
+
+**Files modified:**
+- `README.md` — full rewrite
+
+---
+
+### Task 1: Rewrite README.md
+
+- [ ] **Step 1: Rewrite `README.md` with current project structure**
+
+Replace the entire file with:
+
+```markdown
 # dnt
 
 A small CLI for managing tickets. Tickets have a title, description, status (`todo`, `in_progress`, `done`), priority, and an optional due date.
@@ -28,8 +50,8 @@ Add a new ticket. If no title is provided, interactive prompts guide you through
 | Option | Description |
 |--------|-------------|
 | `-d, --description <text>` | Description of the ticket |
-| `-p, --priority [level]` | Priority: `low`, `medium`, `high` (default: `medium`) |
-| `-s, --status [level]` | Status: `todo`, `in_progress`, `done` (default: `todo`) |
+| `-p, --priority <level>` | Priority: `low`, `medium`, `high` (default: `medium`) |
+| `-s, --status <level>` | Status: `todo`, `in_progress`, `done` (default: `todo`) |
 | `-b, --dueby [timestamp]` | Due date (ISO 8601). Pass as flag to trigger interactive prompt |
 
 Examples:
@@ -100,8 +122,6 @@ Alias: `dnt rm <id>`
 
 Search tickets by text, ID, priority, or status.
 
-Alias: `dnt ticket s <query>`
-
 | Option | Description |
 |--------|-------------|
 | `-t, --title` | Search by title (default) |
@@ -150,4 +170,19 @@ npm run dev       # run with tsx
 npm run typecheck # type check only
 npm run lint      # lint with Biome
 npm run build     # compile to dist/
+```
+
+- [ ] **Step 2: Verify README looks correct**
+
+```bash
+cat README.md | head -5
+```
+
+Expected: description matches current project.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add README.md
+git commit -m "docs: update README to reflect ticket system"
 ```

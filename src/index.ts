@@ -74,6 +74,7 @@ ticket
 
 ticket
   .command("show <id>")
+  .alias("sh")
   .description("Show ticket details")
   .action(async (id) => showHandler(id, { loadTickets, log: console.log }));
 

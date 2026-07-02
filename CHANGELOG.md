@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/d4sf/def-not-taskably/compare/v1.1.0...v1.2.0) (2026-07-02)
+
+
+### Features
+
+* implement an sqlite db to store tickets rather than a plain json file ([1981c86](https://github.com/d4sf/def-not-taskably/commit/1981c866df8565f48c13c89ed8d564751449d176))
+
 ## [1.1.0](https://github.com/d4sf/def-not-taskably/compare/v1.0.1...v1.1.0) (2026-07-02)
 
 

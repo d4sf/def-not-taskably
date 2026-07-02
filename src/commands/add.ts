@@ -1,72 +1,56 @@
-import { priorityPromptChoices } from "../tools/index.js";
-import type { AddHandlerDeps, AddOptions, Task, TaskWriteDeps } from "../types.js";
+import { priorityChoices } from "../tools/index.js";
+import type { AddHandlerDeps, AddOptions, Ticket } from "../types.js";
 
-/**
- * Creates and persists a new task in the task list.
- *
- * This handler resolves task details by checking provided CLI arguments and options first.
- * If information is missing, it utilizes interactive prompts to gather the necessary data.
- * It then constructs a new Task object with a unique timestamp-based ID and persists it.
- *
- * @param title - The name or summary of the task. If undefined, the user will be prompted.
- * @param options - Configuration for the new task, including priority and optional description.
- * @param deps - Injected dependencies for task loading, saving, and logging.
- * @returns {Promise<void>} Resolves once the new task is successfully saved to the file.
- */
 export async function addHandler(
   title: string | undefined,
-  options: Partial<AddOptions>,
+  options: AddOptions,
   deps: AddHandlerDeps,
 ) {
-  const { inputPrompt, selectPrompt } = deps;
+  const { inputPrompt, selectPrompt, datePrompt } = deps;
 
-  const taskTitle =
+  const ticketTitle =
     title ||
     (await inputPrompt({
       message: "Enter the title:",
-      default: "New Task",
+      default: "New Ticket",
       required: true,
     }));
 
-  const taskDescription =
-    options.description ??
-    (title ? "" : await inputPrompt({ message: "Enter the description (optional):", default: "" }));
-
-  const taskPriority =
-    options.priority ||
+  const ticketDescription = options.description ?? "";
+  const ticketPriority =
+    options.priority ??
     (title
       ? "medium"
       : await selectPrompt({
           message: "Choose a priority:",
-          choices: priorityPromptChoices,
+          choices: priorityChoices,
           default: "medium",
         }));
+  const ticketStatus = options.status ?? "todo";
+  const ticketDueby = await (async () => {
+    if (options.dueby === undefined) {
+      if (title) return null;
+      const d = await datePrompt({ message: "Due date (optional):", default: undefined });
+      return d?.toISOString() ?? null;
+    }
+    if (options.dueby === true) {
+      const d = await datePrompt({ message: "Due date:", default: undefined });
+      return d?.toISOString() ?? null;
+    }
+    return typeof options.dueby === "string" ? options.dueby : null;
+  })();
 
-  const newTask: Task = {
+  const newTicket: Ticket = {
     id: Date.now(),
-    title: taskTitle,
-    description: taskDescription,
-    priority: taskPriority,
-    done: false,
+    title: ticketTitle,
+    description: ticketDescription,
+    status: ticketStatus,
+    priority: ticketPriority,
+    dueby: ticketDueby,
   };
 
-  const tasks = await deps.loadTasks();
-
-  await saveTask(newTask, tasks, deps);
-}
-
-/**
- * Updates the task list in memory, persists it to storage, and provides feedback to the user.
- *
- * @param task - The newly created task object to be added.
- * @param tasks - The current collection of tasks retrieved from storage.
- * @param deps - The write dependencies including the save function and logger.
- * @returns {Promise<void>}
- */
-async function saveTask(task: Task, tasks: Task[], deps: TaskWriteDeps) {
-  const { saveTasks, log = console.log } = deps;
-
-  tasks.push(task);
-  await saveTasks(tasks);
-  log(`Added: ${task.title}${task.description ? ` - ${task.description}` : ""}`);
+  const tickets = await deps.loadTickets();
+  tickets.push(newTicket);
+  await deps.saveTickets(tickets);
+  deps.log?.(`Added: ${newTicket.title}`);
 }

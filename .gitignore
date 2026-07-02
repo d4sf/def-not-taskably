@@ -8,6 +8,7 @@ node_modules/
 AGENTS.md
 .opencode
 opencode.json
+docs/superpowers
 
 # Compilación de TypeScript
 dist/

@@ -6,6 +6,7 @@ node_modules/
 
 # agents,  etc
 AGENTS.md
+.opencode
 opencode.json
 
 # Compilación de TypeScript

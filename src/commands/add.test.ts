@@ -1,132 +1,101 @@
 import { describe, expect, it, vi } from "vitest";
 import { addHandler } from "./add.js";
 
-describe("add command", () => {
-  it("appends a new task with the given priority", async () => {
-    const existing = [
-      { id: 1, title: "old", description: "", priority: "low" as const, done: false },
-    ];
-    const saveTasks = vi.fn();
+describe("addHandler", () => {
+  it("creates a ticket with given title and default values", async () => {
+    const saveTickets = vi.fn();
     const log = vi.fn();
 
     await addHandler(
-      "new task",
-      { priority: "high" },
-      {
-        loadTasks: async () => existing,
-        saveTasks,
-        log,
-        inputPrompt: vi.fn(),
-        selectPrompt: vi.fn(),
-      },
-    );
-
-    expect(saveTasks).toHaveBeenCalledOnce();
-
-    const saved = saveTasks.mock.calls[0][0];
-
-    expect(saved).toHaveLength(2);
-    expect(saved[1].title).toBe("new task");
-    expect(saved[1].priority).toBe("high");
-    expect(log).toHaveBeenCalledWith("Added: new task");
-  });
-
-  it("appends a new task with a description", async () => {
-    const existing = [
-      { id: 1, title: "old", description: "", priority: "low" as const, done: false },
-    ];
-    const saveTasks = vi.fn();
-    const log = vi.fn();
-
-    await addHandler(
-      "new task",
-      { priority: "high", description: "a detailed task" },
-      {
-        loadTasks: async () => existing,
-        saveTasks,
-        log,
-        inputPrompt: vi.fn(),
-        selectPrompt: vi.fn(),
-      },
-    );
-
-    expect(saveTasks).toHaveBeenCalledOnce();
-
-    const saved = saveTasks.mock.calls[0][0];
-
-    expect(saved[1].description).toBe("a detailed task");
-    expect(log).toHaveBeenCalledWith("Added: new task - a detailed task");
-  });
-
-  it("appends a new task with default priority medium when not provided", async () => {
-    const existing = [
-      { id: 1, title: "old", description: "", priority: "low" as const, done: false },
-    ];
-    const saveTasks = vi.fn();
-    const log = vi.fn();
-
-    await addHandler(
-      "new task",
+      "my ticket",
       {},
       {
-        loadTasks: async () => existing,
-        saveTasks,
+        loadTickets: async () => [],
+        saveTickets,
         log,
         inputPrompt: vi.fn(),
         selectPrompt: vi.fn(),
       },
     );
 
-    expect(saveTasks).toHaveBeenCalledOnce();
+    expect(saveTickets).toHaveBeenCalledOnce();
+    const saved = saveTickets.mock.calls[0][0];
+    expect(saved).toHaveLength(1);
+    expect(saved[0].title).toBe("my ticket");
+    expect(saved[0].status).toBe("todo");
+    expect(saved[0].priority).toBe("medium");
+    expect(saved[0].dueby).toBeNull();
+    expect(saved[0].description).toBe("");
+    expect(typeof saved[0].id).toBe("number");
+    expect(log).toHaveBeenCalledWith("Added: my ticket");
+  });
 
-    const saved = saveTasks.mock.calls[0][0];
+  it("creates a ticket with all options provided", async () => {
+    const saveTickets = vi.fn();
 
-    expect(saved).toHaveLength(2);
-    expect(saved[1].title).toBe("new task");
-    expect(saved[1].priority).toBe("medium");
-    expect(saved[1].description).toBe("");
-    expect(log).toHaveBeenCalledWith("Added: new task");
+    await addHandler(
+      "bug fix",
+      { priority: "high", status: "in_progress", description: "fix the thing", dueby: "2026-07-15T12:00:00.000Z" },
+      {
+        loadTickets: async () => [],
+        saveTickets,
+        log: vi.fn(),
+        inputPrompt: vi.fn(),
+        selectPrompt: vi.fn(),
+      },
+    );
+
+    const saved = saveTickets.mock.calls[0][0];
+    expect(saved[0].title).toBe("bug fix");
+    expect(saved[0].priority).toBe("high");
+    expect(saved[0].status).toBe("in_progress");
+    expect(saved[0].description).toBe("fix the thing");
+    expect(saved[0].dueby).toBe("2026-07-15T12:00:00.000Z");
   });
 
   it("uses interactive prompts when title is not provided", async () => {
-    const existing = [
-      { id: 1, title: "old", description: "", priority: "low" as const, done: false },
-    ];
-    const saveTasks = vi.fn();
-    const log = vi.fn();
-
-    const inputPrompt = vi
-      .fn()
-      .mockResolvedValueOnce("Prompted Title")
-      .mockResolvedValueOnce("Prompted Desc");
-
-    const selectPrompt = vi.fn().mockResolvedValueOnce("high" as const);
+    const saveTickets = vi.fn();
+    const inputPrompt = vi.fn().mockResolvedValueOnce("Prompted Title");
+    const selectPrompt = vi.fn().mockResolvedValueOnce("high");
 
     await addHandler(
       undefined,
       {},
       {
-        loadTasks: async () => existing,
-        saveTasks,
-        log,
+        loadTickets: async () => [],
+        saveTickets,
+        log: vi.fn(),
         inputPrompt,
         selectPrompt,
       },
     );
 
-    expect(inputPrompt).toHaveBeenCalledTimes(2);
+    expect(inputPrompt).toHaveBeenCalledTimes(1);
     expect(selectPrompt).toHaveBeenCalledTimes(1);
 
-    expect(saveTasks).toHaveBeenCalledOnce();
-    const saved = saveTasks.mock.calls[0][0];
+    const saved = saveTickets.mock.calls[0][0];
+    expect(saved[0].title).toBe("Prompted Title");
+    expect(saved[0].priority).toBe("high");
+  });
 
+  it("appends to existing tickets", async () => {
+    const existing = [{ id: 1, title: "old", description: "", status: "todo" as const, priority: "low" as const, dueby: null }];
+    const saveTickets = vi.fn();
+
+    await addHandler(
+      "second",
+      { priority: "high" },
+      {
+        loadTickets: async () => existing,
+        saveTickets,
+        log: vi.fn(),
+        inputPrompt: vi.fn(),
+        selectPrompt: vi.fn(),
+      },
+    );
+
+    const saved = saveTickets.mock.calls[0][0];
     expect(saved).toHaveLength(2);
-    expect(saved[1].title).toBe("Prompted Title");
-    expect(saved[1].description).toBe("Prompted Desc");
-    expect(saved[1].priority).toBe("high");
-    expect(saved[1].done).toBe(false);
-    expect(typeof saved[1].id).toBe("number");
-
-    expect(log).toHaveBeenCalledWith("Added: Prompted Title - Prompted Desc");
+    expect(saved[1].title).toBe("second");
   });
 });

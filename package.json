@@ -1,7 +1,7 @@
 {
   "name": "dnt",
   "version": "1.0.1",
-  "description": "A simple CLI task manager built with Commander.js",
+  "description": "A simple CLI for managing tickets",
   "main": "./dist/index.js",
   "types": "./dist/types.d.ts",
   "scripts": {

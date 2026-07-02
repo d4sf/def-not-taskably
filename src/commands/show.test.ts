@@ -1,68 +1,45 @@
 import { describe, expect, it, vi } from "vitest";
 import { showHandler } from "./show.js";
 
-const tasks = [
-  {
-    id: 1,
-    title: "Task One",
-    description: "A description",
-    priority: "high" as const,
-    done: false,
-  },
-  { id: 2, title: "Task Two", description: "", priority: "low" as const, done: true },
-];
-
-describe("show command", () => {
-  it("displays all task fields", async () => {
+describe("showHandler", () => {
+  it("displays full ticket details", async () => {
     const log = vi.fn();
+    const tickets = [
+      { id: 42, title: "Test Ticket", description: "A test", status: "in_progress" as const, priority: "high" as const, dueby: "2026-07-15T12:00:00.000Z" },
+    ];
 
-    await showHandler("1", {
-      loadTasks: async () => tasks,
-      log,
-    });
+    await showHandler("42", { loadTickets: async () => tickets, log });
 
-    expect(log).toHaveBeenCalledTimes(5);
-    expect(log.mock.calls[0][0]).toBe("ID: 1");
-    expect(log.mock.calls[1][0]).toBe("Title: Task One");
-    expect(log.mock.calls[2][0]).toBe("Description: A description");
-    expect(log.mock.calls[3][0]).toBe("Priority: high");
-    expect(log.mock.calls[4][0]).toBe("Done: No");
+    expect(log).toHaveBeenCalledWith("ID: 42");
+    expect(log).toHaveBeenCalledWith("Title: Test Ticket");
+    expect(log).toHaveBeenCalledWith("Description: A test");
+    expect(log).toHaveBeenCalledWith("Status: in_progress");
+    expect(log).toHaveBeenCalledWith("Priority: high");
+    expect(log).toHaveBeenCalledWith("Due: 2026-07-15T12:00:00.000Z");
   });
 
-  it("displays (none) when description is empty", async () => {
+  it("shows (none) for missing description and dueby", async () => {
     const log = vi.fn();
+    const tickets = [
+      { id: 1, title: "x", description: "", status: "todo" as const, priority: "low" as const, dueby: null },
+    ];
 
-    await showHandler("2", {
-      loadTasks: async () => tasks,
-      log,
-    });
+    await showHandler("1", { loadTickets: async () => tickets, log });
 
-    expect(log.mock.calls[2][0]).toBe("Description: (none)");
+    expect(log).toHaveBeenCalledWith("Description: (none)");
+    expect(log).toHaveBeenCalledWith("Due: (none)");
   });
 
-  it("shows Yes when task is done", async () => {
-    const log = vi.fn();
+  it("exits with error when ticket not found", async () => {
+    const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await showHandler("2", {
-      loadTasks: async () => tasks,
-      log,
-    });
+    await showHandler("999", { loadTickets: async () => [], log: vi.fn() });
 
-    expect(log.mock.calls[4][0]).toBe("Done: Yes");
-  });
+    expect(errorSpy).toHaveBeenCalledWith("No ticket found with id 999");
+    expect(exitSpy).toHaveBeenCalledWith(1);
 
-  it("exits with error when task not found", async () => {
-    const log = vi.fn();
-    const processExitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
-
-    await showHandler("999", {
-      loadTasks: async () => tasks,
-      log,
-    });
-
-    expect(processExitSpy).toHaveBeenCalledWith(1);
-    expect(log).not.toHaveBeenCalled();
-
-    processExitSpy.mockRestore();
+    exitSpy.mockRestore();
+    errorSpy.mockRestore();
   });
 });

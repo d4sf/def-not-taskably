@@ -12,25 +12,26 @@ const baseTicket = {
 
 describe("updateHandler", () => {
   it("updates title", async () => {
-    const saveTickets = vi.fn();
+    const updateTicket = vi.fn();
 
     await updateHandler(
       "1",
       { title: "new title" },
       {
-        loadTickets: async () => [baseTicket],
-        saveTickets,
+        getTickets: () => [baseTicket],
+        getTicketById: (id) => [baseTicket].find((t) => t.id === id),
+        updateTicket,
         log: vi.fn(),
       },
     );
 
-    expect(saveTickets).toHaveBeenCalledOnce();
-    const saved = saveTickets.mock.calls[0][0];
-    expect(saved[0].title).toBe("new title");
+    expect(updateTicket).toHaveBeenCalledOnce();
+    const saved = updateTicket.mock.calls[0][1];
+    expect(saved.title).toBe("new title");
   });
 
   it("updates multiple fields", async () => {
-    const saveTickets = vi.fn();
+    const updateTicket = vi.fn();
 
     await updateHandler(
       "1",
@@ -41,17 +42,18 @@ describe("updateHandler", () => {
         dueby: "2026-08-01T00:00:00.000Z",
       },
       {
-        loadTickets: async () => [baseTicket],
-        saveTickets,
+        getTickets: () => [baseTicket],
+        getTicketById: (id) => [baseTicket].find((t) => t.id === id),
+        updateTicket,
         log: vi.fn(),
       },
     );
 
-    const saved = saveTickets.mock.calls[0][0];
-    expect(saved[0].title).toBe("new");
-    expect(saved[0].description).toBe("new desc");
-    expect(saved[0].priority).toBe("high");
-    expect(saved[0].dueby).toBe("2026-08-01T00:00:00.000Z");
+    const saved = updateTicket.mock.calls[0][1];
+    expect(saved.title).toBe("new");
+    expect(saved.description).toBe("new desc");
+    expect(saved.priority).toBe("high");
+    expect(saved.dueby).toBe("2026-08-01T00:00:00.000Z");
   });
 
   it("fails when no update flags provided", async () => {
@@ -62,8 +64,9 @@ describe("updateHandler", () => {
       "1",
       {},
       {
-        loadTickets: async () => [baseTicket],
-        saveTickets: vi.fn(),
+        getTickets: () => [baseTicket],
+        getTicketById: (id) => [baseTicket].find((t) => t.id === id),
+        updateTicket: vi.fn(),
         log: vi.fn(),
       },
     );
@@ -85,8 +88,9 @@ describe("updateHandler", () => {
       "999",
       { title: "x" },
       {
-        loadTickets: async () => [],
-        saveTickets: vi.fn(),
+        getTickets: () => [],
+        getTicketById: () => undefined,
+        updateTicket: vi.fn(),
         log: vi.fn(),
       },
     );

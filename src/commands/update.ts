@@ -1,7 +1,7 @@
 import type { UpdateHandlerDeps, UpdateOptions } from "../types.js";
 
 export async function updateHandler(id: string, options: UpdateOptions, deps: UpdateHandlerDeps) {
-  const { loadTickets, saveTickets, log = console.log } = deps;
+  const { updateTicket, getTicketById, log = console.log } = deps;
   const { title, description, priority, dueby } = options;
 
   if (!title && !description && !priority && !dueby) {
@@ -10,8 +10,8 @@ export async function updateHandler(id: string, options: UpdateOptions, deps: Up
     return;
   }
 
-  const tickets = await loadTickets();
-  const ticket = tickets.find((t) => String(t.id) === id);
+  const numId = Number(id);
+  const ticket = getTicketById(numId);
 
   if (!ticket) {
     console.error(`No ticket found with id ${id}`);
@@ -25,22 +25,15 @@ export async function updateHandler(id: string, options: UpdateOptions, deps: Up
       process.exit(1);
       return;
     }
-    ticket.title = title;
   }
 
-  if (description !== undefined) {
-    ticket.description = description;
-  }
+  const fields: Partial<typeof options> = {};
+  if (title !== undefined) fields.title = title;
+  if (description !== undefined) fields.description = description;
+  if (priority !== undefined) fields.priority = priority;
+  if (dueby !== undefined) fields.dueby = dueby;
 
-  if (priority !== undefined) {
-    ticket.priority = priority;
-  }
-
-  if (dueby !== undefined) {
-    ticket.dueby = dueby;
-  }
-
-  await saveTickets(tickets);
+  updateTicket(numId, fields);
 
   const updates: string[] = [];
   if (title !== undefined) updates.push("title");

@@ -49,8 +49,6 @@ export async function addHandler(
     dueby: ticketDueby,
   };
 
-  const tickets = await deps.loadTickets();
-  tickets.push(newTicket);
-  await deps.saveTickets(tickets);
+  deps.addTicket(newTicket);
   deps.log?.(`Added: ${newTicket.title}`);
 }

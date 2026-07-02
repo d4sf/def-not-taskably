@@ -1,8 +1,8 @@
 import type { ListHandlerDeps, ListOptions } from "../types.js";
 
 export async function listHandler(options: ListOptions, deps: ListHandlerDeps) {
-  const { loadTickets, log = console.log } = deps;
-  const tickets = await loadTickets();
+  const { getTickets, log = console.log } = deps;
+  const tickets = getTickets();
   const filtered = tickets
     .filter((t) => options.all || t.status !== "done")
     .filter((t) => !options.status || t.status === options.status)

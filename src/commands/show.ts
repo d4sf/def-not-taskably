@@ -1,9 +1,9 @@
 import type { ShowHandlerDeps } from "../types.js";
 
 export async function showHandler(id: string, deps: ShowHandlerDeps) {
-  const { loadTickets, log = console.log } = deps;
-  const tickets = await loadTickets();
-  const ticket = tickets.find((t) => String(t.id) === id);
+  const { getTicketById, log = console.log } = deps;
+  const numId = Number(id);
+  const ticket = getTicketById(numId);
 
   if (!ticket) {
     console.error(`No ticket found with id ${id}`);

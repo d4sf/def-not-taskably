@@ -3,15 +3,18 @@ import { addHandler } from "./add.js";
 
 describe("addHandler", () => {
   it("creates a ticket with given title and default values", async () => {
-    const saveTickets = vi.fn();
+    const addTicket = vi.fn();
     const log = vi.fn();
 
     await addHandler(
       "my ticket",
       {},
       {
-        loadTickets: async () => [],
-        saveTickets,
+        getTickets: () => [],
+        getTicketById: vi.fn(),
+        addTicket,
+        updateTicket: vi.fn(),
+        deleteTicket: vi.fn(),
         log,
         inputPrompt: vi.fn(),
         selectPrompt: vi.fn(),
@@ -19,20 +22,19 @@ describe("addHandler", () => {
       },
     );
 
-    expect(saveTickets).toHaveBeenCalledOnce();
-    const saved = saveTickets.mock.calls[0][0];
-    expect(saved).toHaveLength(1);
-    expect(saved[0].title).toBe("my ticket");
-    expect(saved[0].status).toBe("todo");
-    expect(saved[0].priority).toBe("medium");
-    expect(saved[0].dueby).toBeNull();
-    expect(saved[0].description).toBe("");
-    expect(typeof saved[0].id).toBe("number");
+    expect(addTicket).toHaveBeenCalledOnce();
+    const saved = addTicket.mock.calls[0][0];
+    expect(saved.title).toBe("my ticket");
+    expect(saved.status).toBe("todo");
+    expect(saved.priority).toBe("medium");
+    expect(saved.dueby).toBeNull();
+    expect(saved.description).toBe("");
+    expect(typeof saved.id).toBe("number");
     expect(log).toHaveBeenCalledWith("Added: my ticket");
   });
 
   it("creates a ticket with all options provided", async () => {
-    const saveTickets = vi.fn();
+    const addTicket = vi.fn();
 
     await addHandler(
       "bug fix",
@@ -43,8 +45,11 @@ describe("addHandler", () => {
         dueby: "2026-07-15T12:00:00.000Z",
       },
       {
-        loadTickets: async () => [],
-        saveTickets,
+        getTickets: () => [],
+        getTicketById: vi.fn(),
+        addTicket,
+        updateTicket: vi.fn(),
+        deleteTicket: vi.fn(),
         log: vi.fn(),
         inputPrompt: vi.fn(),
         selectPrompt: vi.fn(),
@@ -52,16 +57,16 @@ describe("addHandler", () => {
       },
     );
 
-    const saved = saveTickets.mock.calls[0][0];
-    expect(saved[0].title).toBe("bug fix");
-    expect(saved[0].priority).toBe("high");
-    expect(saved[0].status).toBe("in_progress");
-    expect(saved[0].description).toBe("fix the thing");
-    expect(saved[0].dueby).toBe("2026-07-15T12:00:00.000Z");
+    const saved = addTicket.mock.calls[0][0];
+    expect(saved.title).toBe("bug fix");
+    expect(saved.priority).toBe("high");
+    expect(saved.status).toBe("in_progress");
+    expect(saved.description).toBe("fix the thing");
+    expect(saved.dueby).toBe("2026-07-15T12:00:00.000Z");
   });
 
   it("uses interactive prompts when title is not provided", async () => {
-    const saveTickets = vi.fn();
+    const addTicket = vi.fn();
     const inputPrompt = vi.fn().mockResolvedValueOnce("Prompted Title");
     const selectPrompt = vi.fn().mockResolvedValueOnce("high");
 
@@ -69,8 +74,11 @@ describe("addHandler", () => {
       undefined,
       {},
       {
-        loadTickets: async () => [],
-        saveTickets,
+        getTickets: () => [],
+        getTicketById: vi.fn(),
+        addTicket,
+        updateTicket: vi.fn(),
+        deleteTicket: vi.fn(),
         log: vi.fn(),
         inputPrompt,
         selectPrompt,
@@ -81,9 +89,9 @@ describe("addHandler", () => {
     expect(inputPrompt).toHaveBeenCalledTimes(1);
     expect(selectPrompt).toHaveBeenCalledTimes(1);
 
-    const saved = saveTickets.mock.calls[0][0];
-    expect(saved[0].title).toBe("Prompted Title");
-    expect(saved[0].priority).toBe("high");
+    const saved = addTicket.mock.calls[0][0];
+    expect(saved.title).toBe("Prompted Title");
+    expect(saved.priority).toBe("high");
   });
 
   it("appends to existing tickets", async () => {
@@ -97,14 +105,17 @@ describe("addHandler", () => {
         dueby: null,
       },
     ];
-    const saveTickets = vi.fn();
+    const addTicket = vi.fn();
 
     await addHandler(
       "second",
       { priority: "high" },
       {
-        loadTickets: async () => existing,
-        saveTickets,
+        getTickets: () => existing,
+        getTicketById: vi.fn(),
+        addTicket,
+        updateTicket: vi.fn(),
+        deleteTicket: vi.fn(),
         log: vi.fn(),
         inputPrompt: vi.fn(),
         selectPrompt: vi.fn(),
@@ -112,13 +123,12 @@ describe("addHandler", () => {
       },
     );
 
-    const saved = saveTickets.mock.calls[0][0];
-    expect(saved).toHaveLength(2);
-    expect(saved[1].title).toBe("second");
+    const saved = addTicket.mock.calls[0][0];
+    expect(saved.title).toBe("second");
   });
 
   it("prompts for dueby in interactive mode", async () => {
-    const saveTickets = vi.fn();
+    const addTicket = vi.fn();
     const inputPrompt = vi.fn().mockResolvedValueOnce("My Ticket");
     const selectPrompt = vi.fn().mockResolvedValueOnce("medium");
     const datePrompt = vi.fn().mockResolvedValueOnce(new Date("2026-07-15T12:00:00.000Z"));
@@ -127,8 +137,11 @@ describe("addHandler", () => {
       undefined,
       {},
       {
-        loadTickets: async () => [],
-        saveTickets,
+        getTickets: () => [],
+        getTicketById: vi.fn(),
+        addTicket,
+        updateTicket: vi.fn(),
+        deleteTicket: vi.fn(),
         log: vi.fn(),
         inputPrompt,
         selectPrompt,
@@ -137,12 +150,12 @@ describe("addHandler", () => {
     );
 
     expect(datePrompt).toHaveBeenCalledTimes(1);
-    const saved = saveTickets.mock.calls[0][0];
-    expect(saved[0].dueby).toBe("2026-07-15T12:00:00.000Z");
+    const saved = addTicket.mock.calls[0][0];
+    expect(saved.dueby).toBe("2026-07-15T12:00:00.000Z");
   });
 
   it("skips dueby when user cancels date prompt", async () => {
-    const saveTickets = vi.fn();
+    const addTicket = vi.fn();
     const inputPrompt = vi.fn().mockResolvedValueOnce("My Ticket");
     const selectPrompt = vi.fn().mockResolvedValueOnce("medium");
     const datePrompt = vi.fn().mockResolvedValueOnce(undefined);
@@ -151,8 +164,11 @@ describe("addHandler", () => {
       undefined,
       {},
       {
-        loadTickets: async () => [],
-        saveTickets,
+        getTickets: () => [],
+        getTicketById: vi.fn(),
+        addTicket,
+        updateTicket: vi.fn(),
+        deleteTicket: vi.fn(),
         log: vi.fn(),
         inputPrompt,
         selectPrompt,
@@ -160,7 +176,7 @@ describe("addHandler", () => {
       },
     );
 
-    const saved = saveTickets.mock.calls[0][0];
-    expect(saved[0].dueby).toBeNull();
+    const saved = addTicket.mock.calls[0][0];
+    expect(saved.dueby).toBeNull();
   });
 });

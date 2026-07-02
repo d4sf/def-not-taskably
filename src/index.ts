@@ -15,7 +15,7 @@ import { statusHandler } from "./commands/status.js";
 import { updateHandler } from "./commands/update.js";
 
 import { date } from "./tools/date-prompt.js";
-import { loadTickets, saveTickets, validatePriority, validateStatus } from "./tools/index.js";
+import { addTicket, deleteTicket, getTicketById, getTickets, updateTicket, validatePriority, validateStatus } from "./tools/index.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(await readFile(join(__dirname, "..", "package.json"), "utf8"));
@@ -55,8 +55,11 @@ ticket
   .option("-b, --dueby [timestamp]", "due date (ISO 8601 timestamp)")
   .action(async (title, options) => {
     addHandler(title, options, {
-      loadTickets,
-      saveTickets,
+      getTickets,
+      getTicketById,
+      addTicket,
+      updateTicket,
+      deleteTicket,
       log: console.log,
       inputPrompt: input,
       selectPrompt: select,
@@ -70,13 +73,13 @@ ticket
   .option("-a, --all", "include done tickets")
   .option("-s, --status <level>", "filter by status")
   .option("-p, --priority <level>", "filter by priority")
-  .action(async (options) => listHandler(options, { loadTickets, log: console.log }));
+  .action(async (options) => listHandler(options, { getTickets, getTicketById, log: console.log }));
 
 ticket
   .command("show <id>")
   .alias("sh")
   .description("Show ticket details")
-  .action(async (id) => showHandler(id, { loadTickets, log: console.log }));
+  .action(async (id) => showHandler(id, { getTickets, getTicketById, log: console.log }));
 
 ticket
   .command("update <id>")
@@ -87,21 +90,21 @@ ticket
   .option("-p, --priority <level>", "priority: low, medium, high", validatePriority)
   .option("-b, --dueby <timestamp>", "due date (ISO 8601 timestamp)")
   .action(async (id, options) =>
-    updateHandler(id, options, { loadTickets, saveTickets, log: console.log }),
+    updateHandler(id, options, { getTickets, getTicketById, addTicket, updateTicket, deleteTicket, log: console.log }),
   );
 
 ticket
   .command("status <id> <status>")
   .description("Change ticket status (todo, in_progress, done)")
   .action(async (id, status) =>
-    statusHandler(id, status, { loadTickets, saveTickets, log: console.log }),
+    statusHandler(id, status, { getTickets, getTicketById, addTicket, updateTicket, deleteTicket, log: console.log }),
   );
 
 ticket
   .command("remove <id>")
   .alias("rm")
   .description("Delete a ticket")
-  .action(async (id) => removeHandler(id, { loadTickets, saveTickets, log: console.log }));
+  .action(async (id) => removeHandler(id, { getTickets, getTicketById, addTicket, updateTicket, deleteTicket, log: console.log }));
 
 ticket
   .command("search <query>")
@@ -113,7 +116,7 @@ ticket
   .option("-s, --status <level>", "filter by status")
   .option("-c, --case-sensitive", "enable case-sensitive search")
   .action(async (query, options) =>
-    searchHandler({ query, ...options }, { loadTickets, log: console.log }),
+    searchHandler({ query, ...options }, { getTickets, getTicketById, log: console.log }),
   );
 
 try {

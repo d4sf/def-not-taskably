@@ -19,7 +19,7 @@ describe("listHandler", () => {
       makeTicket({ id: 2, title: "finished", status: "done" }),
     ];
 
-    await listHandler({}, { loadTickets: async () => tickets, log });
+    await listHandler({}, { getTickets: () => tickets, getTicketById: vi.fn(), log });
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining("active"));
     expect(log).not.toHaveBeenCalledWith(expect.stringContaining("finished"));
@@ -32,7 +32,7 @@ describe("listHandler", () => {
       makeTicket({ id: 2, title: "finished", status: "done" }),
     ];
 
-    await listHandler({ all: true }, { loadTickets: async () => tickets, log });
+    await listHandler({ all: true }, { getTickets: () => tickets, getTicketById: vi.fn(), log });
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining("active"));
     expect(log).toHaveBeenCalledWith(expect.stringContaining("finished"));
@@ -46,7 +46,7 @@ describe("listHandler", () => {
       makeTicket({ id: 3, title: "done item", status: "done" }),
     ];
 
-    await listHandler({ status: "todo" }, { loadTickets: async () => tickets, log });
+    await listHandler({ status: "todo" }, { getTickets: () => tickets, getTicketById: vi.fn(), log });
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining("todo item"));
     expect(log).not.toHaveBeenCalledWith(expect.stringContaining("in progress"));
@@ -59,7 +59,7 @@ describe("listHandler", () => {
       makeTicket({ id: 2, title: "low priority", priority: "low" }),
     ];
 
-    await listHandler({ priority: "high" }, { loadTickets: async () => tickets, log });
+    await listHandler({ priority: "high" }, { getTickets: () => tickets, getTicketById: vi.fn(), log });
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining("high priority"));
     expect(log).not.toHaveBeenCalledWith(expect.stringContaining("low priority"));
@@ -68,7 +68,7 @@ describe("listHandler", () => {
   it("shows message when no tickets match", async () => {
     const log = vi.fn();
 
-    await listHandler({}, { loadTickets: async () => [], log });
+    await listHandler({}, { getTickets: () => [], getTicketById: vi.fn(), log });
 
     expect(log).toHaveBeenCalledWith("No tickets found.");
   });

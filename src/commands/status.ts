@@ -1,9 +1,9 @@
 import type { Status, StatusHandlerDeps } from "../types.js";
 
 export async function statusHandler(id: string, status: Status, deps: StatusHandlerDeps) {
-  const { loadTickets, saveTickets, log = console.log } = deps;
-  const tickets = await loadTickets();
-  const ticket = tickets.find((t) => String(t.id) === id);
+  const { updateTicket, getTicketById, log = console.log } = deps;
+  const numId = Number(id);
+  const ticket = getTicketById(numId);
 
   if (!ticket) {
     console.error(`No ticket found with id ${id}`);
@@ -11,7 +11,6 @@ export async function statusHandler(id: string, status: Status, deps: StatusHand
     return;
   }
 
-  ticket.status = status;
-  await saveTickets(tickets);
+  updateTicket(numId, { status });
   log(`Ticket ${id} status changed to ${status}: ${ticket.title}`);
 }

@@ -21,11 +21,14 @@ export interface HandlerDeps {
 }
 
 export interface TicketReadDeps extends HandlerDeps {
-  loadTickets: () => Promise<Ticket[]>;
+  getTickets: () => Ticket[];
+  getTicketById: (id: number) => Ticket | undefined;
 }
 
 export interface TicketWriteDeps extends TicketReadDeps {
-  saveTickets: (tickets: Ticket[]) => Promise<void>;
+  addTicket: (ticket: Ticket) => void;
+  updateTicket: (id: number, fields: Partial<Ticket>) => void;
+  deleteTicket: (id: number) => void;
 }
 
 export interface AddHandlerDeps extends TicketWriteDeps {

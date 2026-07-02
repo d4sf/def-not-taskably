@@ -23,18 +23,17 @@ describe("removeHandler", () => {
       },
     ];
 
-    await removeHandler("2", { loadTickets: async () => tickets, saveTickets, log: vi.fn() });
+    await removeHandler("2", { getTickets: () => tickets, getTicketById: (id) => tickets.find(t => t.id === id), addTicket: vi.fn(), updateTicket: vi.fn(), deleteTicket: saveTickets, log: vi.fn() });
 
     const saved = saveTickets.mock.calls[0][0];
-    expect(saved).toHaveLength(1);
-    expect(saved[0].id).toBe(1);
+    expect(saved).toBe(2);
   });
 
   it("fails when ticket not found", async () => {
     const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await removeHandler("999", { loadTickets: async () => [], saveTickets: vi.fn(), log: vi.fn() });
+    await removeHandler("999", { getTickets: () => [], getTicketById: () => undefined, addTicket: vi.fn(), updateTicket: vi.fn(), deleteTicket: vi.fn(), log: vi.fn() });
 
     expect(errorSpy).toHaveBeenCalledWith("No ticket found with id 999");
     expect(exitSpy).toHaveBeenCalledWith(1);

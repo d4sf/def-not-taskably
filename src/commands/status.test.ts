@@ -3,7 +3,7 @@ import { statusHandler } from "./status.js";
 
 describe("statusHandler", () => {
   it("changes status of a ticket", async () => {
-    const saveTickets = vi.fn();
+    const updateTicket = vi.fn();
     const tickets = [
       {
         id: 1,
@@ -16,13 +16,14 @@ describe("statusHandler", () => {
     ];
 
     await statusHandler("1", "done", {
-      loadTickets: async () => tickets,
-      saveTickets,
+      getTickets: () => tickets,
+      getTicketById: (id) => tickets.find((t) => t.id === id),
+      updateTicket,
       log: vi.fn(),
     });
 
-    const saved = saveTickets.mock.calls[0][0];
-    expect(saved[0].status).toBe("done");
+    const saved = updateTicket.mock.calls[0][1];
+    expect(saved.status).toBe("done");
   });
 
   it("fails when ticket not found", async () => {
@@ -30,8 +31,9 @@ describe("statusHandler", () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     await statusHandler("999", "done", {
-      loadTickets: async () => [],
-      saveTickets: vi.fn(),
+      getTickets: () => [],
+      getTicketById: () => undefined,
+      updateTicket: vi.fn(),
       log: vi.fn(),
     });
 

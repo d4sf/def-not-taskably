@@ -1,16 +1,16 @@
 import type { RemoveHandlerDeps } from "../types.js";
 
 export async function removeHandler(id: string, deps: RemoveHandlerDeps) {
-  const { loadTickets, saveTickets, log = console.log } = deps;
-  const tickets = await loadTickets();
-  const next = tickets.filter((t) => String(t.id) !== id);
+  const { deleteTicket, getTicketById, log = console.log } = deps;
+  const numId = Number(id);
+  const ticket = getTicketById(numId);
 
-  if (next.length === tickets.length) {
+  if (!ticket) {
     console.error(`No ticket found with id ${id}`);
     process.exit(1);
     return;
   }
 
-  await saveTickets(next);
+  deleteTicket(numId);
   log(`Removed ticket ${id}`);
 }

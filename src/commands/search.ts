@@ -2,8 +2,8 @@ import type { SearchHandlerDeps, SearchOptions } from "../types.js";
 
 export async function searchHandler(options: SearchOptions, deps: SearchHandlerDeps) {
   const { query, id, priority, status, caseSensitive } = options;
-  const { loadTickets, log = console.log } = deps;
-  const tickets = await loadTickets();
+  const { getTickets, log = console.log } = deps;
+  const tickets = getTickets();
 
   let filtered = tickets;
 

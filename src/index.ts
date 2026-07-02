@@ -7,15 +7,14 @@ import { input, select } from "@inquirer/prompts";
 import { Command } from "commander";
 
 import { addHandler } from "./commands/add.js";
-import { doneHandler } from "./commands/done.js";
-import { editHandler } from "./commands/edit.js";
 import { listHandler } from "./commands/list.js";
+import { showHandler } from "./commands/show.js";
+import { updateHandler } from "./commands/update.js";
+import { statusHandler } from "./commands/status.js";
 import { removeHandler } from "./commands/remove.js";
 import { searchHandler } from "./commands/search.js";
-import { showHandler } from "./commands/show.js";
-import { undoneHandler } from "./commands/undone.js";
 
-import { loadTasks, saveTasks, validatePriority } from "./tools/index.js";
+import { loadTickets, saveTickets, validatePriority, validateStatus } from "./tools/index.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(await readFile(join(__dirname, "..", "package.json"), "utf8"));
@@ -25,7 +24,7 @@ program.version(pkg.version);
 
 program
   .name("dnt")
-  .description("A small CLI for managing local task lists")
+  .description("A small CLI for managing tickets")
   .option("-v, --verbose", "enable verbose logging")
   .hook("preAction", (thisCommand, _actionCommand) => {
     if (thisCommand.opts().verbose) {
@@ -37,81 +36,82 @@ program.addHelpText(
   "after",
   `
     Examples:
-    $ dnt add "Write tests" --priority high
-    $ dnt list --all
-    $ dnt done 169999999
-    $ dnt rm 169999999
+    $ dnt ticket add "Fix login bug" --priority high
+    $ dnt ticket list
+    $ dnt ticket status 42 done
+    $ dnt ticket rm 42
   `,
 );
 
-program
+const ticket = program.command("ticket").description("Manage tickets");
+
+ticket
   .command("add [title]")
-  .description("Add a new task")
-  .option("-d, --description <text>", "description of the task")
+  .description("Add a new ticket")
+  .option("-d, --description <text>", "description of the ticket")
   .option("-p, --priority [level]", "priority: low, medium, high", validatePriority)
+  .option("-s, --status [level]", "status: todo, in_progress, done", validateStatus)
+  .option("-b, --dueby <timestamp>", "due date (ISO 8601 timestamp)")
   .action(async (title, options) => {
     addHandler(title, options, {
-      loadTasks,
-      saveTasks,
+      loadTickets,
+      saveTickets,
       log: console.log,
       inputPrompt: input,
       selectPrompt: select,
     });
   });
 
-program
+ticket
   .command("list")
-  .description("Show all tasks")
-  .option("-a, --all", "include completed tasks")
+  .description("List tickets")
+  .option("-a, --all", "include done tickets")
+  .option("-s, --status <level>", "filter by status")
   .option("-p, --priority <level>", "filter by priority")
-  .action(async (options) => listHandler(options, { loadTasks, log: console.log }));
+  .action(async (options) => listHandler(options, { loadTickets, log: console.log }));
 
-program
-  .command("done <id>")
-  .description("Mark a task as completed")
-  .action(async (id) => doneHandler(id, { loadTasks, saveTasks, log: console.log }));
+ticket
+  .command("show <id>")
+  .description("Show ticket details")
+  .action(async (id) => showHandler(id, { loadTickets, log: console.log }));
 
-program
-  .command("remove <id>")
-  .alias("rm")
-  .description("Delete a task")
-  .action(async (id) => removeHandler(id, { loadTasks, saveTasks, log: console.log }));
-
-program
-  .command("undone <id>")
-  .alias("ud")
-  .description("Mark a task as not completed")
-  .action(async (id) => undoneHandler(id, { loadTasks, saveTasks, log: console.log }));
-
-program
-  .command("edit <id>")
-  .alias("update")
-  .description("Edit a task")
+ticket
+  .command("update <id>")
+  .alias("edit")
+  .description("Update ticket fields")
   .option("-t, --title <value>", "new title")
   .option("-d, --description <text>", "new description")
   .option("-p, --priority <level>", "priority: low, medium, high", validatePriority)
+  .option("-b, --dueby <timestamp>", "due date (ISO 8601 timestamp)")
   .action(async (id, options) =>
-    editHandler(id, options, { loadTasks, saveTasks, log: console.log }),
+    updateHandler(id, options, { loadTickets, saveTickets, log: console.log }),
   );
 
-program
+ticket
+  .command("status <id> <status>")
+  .description("Change ticket status (todo, in_progress, done)")
+  .action(async (id, status) =>
+    statusHandler(id, status, { loadTickets, saveTickets, log: console.log }),
+  );
+
+ticket
+  .command("remove <id>")
+  .alias("rm")
+  .description("Delete a ticket")
+  .action(async (id) => removeHandler(id, { loadTickets, saveTickets, log: console.log }));
+
+ticket
   .command("search <query>")
   .alias("s")
-  .description("Search tasks by title, id, or priority")
-  .usage("dnt search <query> [-t] [-i] [-p <level>] [-c]")
+  .description("Search tickets")
   .option("-t, --title", "search by title (default)")
-  .option("-i, --id", "search by id (cannot be combined with -t or -p)")
-  .option("-p, --priority <level>", "search by priority (low, medium, high)", validatePriority)
-  .option("-c, --case-sensitive", "enable case-sensitive title search")
+  .option("-i, --id", "search by id")
+  .option("-p, --priority <level>", "filter by priority")
+  .option("-s, --status <level>", "filter by status")
+  .option("-c, --case-sensitive", "enable case-sensitive search")
   .action(async (query, options) =>
-    searchHandler({ query, ...options }, { loadTasks, log: console.log }),
+    searchHandler({ query, ...options }, { loadTickets, log: console.log }),
   );
-
-program
-  .command("show <id>")
-  .alias("sh")
-  .description("Show task details")
-  .action(async (id) => showHandler(id, { loadTasks, log: console.log }));
 
 try {
   await program.parseAsync(process.argv);

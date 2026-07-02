@@ -5,8 +5,22 @@ describe("removeHandler", () => {
   it("removes a ticket by id", async () => {
     const saveTickets = vi.fn();
     const tickets = [
-      { id: 1, title: "keep", description: "", status: "todo" as const, priority: "low" as const, dueby: null },
-      { id: 2, title: "remove", description: "", status: "todo" as const, priority: "low" as const, dueby: null },
+      {
+        id: 1,
+        title: "keep",
+        description: "",
+        status: "todo" as const,
+        priority: "low" as const,
+        dueby: null,
+      },
+      {
+        id: 2,
+        title: "remove",
+        description: "",
+        status: "todo" as const,
+        priority: "low" as const,
+        dueby: null,
+      },
     ];
 
     await removeHandler("2", { loadTickets: async () => tickets, saveTickets, log: vi.fn() });

@@ -35,6 +35,8 @@ export async function searchHandler(options: SearchOptions, deps: SearchHandlerD
   }
 
   for (const ticket of filtered) {
-    log(`[${ticket.status}] ${ticket.id} (${ticket.priority}) - ${ticket.title} - ${ticket.description}`);
+    log(
+      `[${ticket.status}] ${ticket.id} (${ticket.priority}) - ${ticket.title} - ${ticket.description}`,
+    );
   }
 }

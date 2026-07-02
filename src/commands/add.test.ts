@@ -35,7 +35,12 @@ describe("addHandler", () => {
 
     await addHandler(
       "bug fix",
-      { priority: "high", status: "in_progress", description: "fix the thing", dueby: "2026-07-15T12:00:00.000Z" },
+      {
+        priority: "high",
+        status: "in_progress",
+        description: "fix the thing",
+        dueby: "2026-07-15T12:00:00.000Z",
+      },
       {
         loadTickets: async () => [],
         saveTickets,
@@ -79,7 +84,16 @@ describe("addHandler", () => {
   });
 
   it("appends to existing tickets", async () => {
-    const existing = [{ id: 1, title: "old", description: "", status: "todo" as const, priority: "low" as const, dueby: null }];
+    const existing = [
+      {
+        id: 1,
+        title: "old",
+        description: "",
+        status: "todo" as const,
+        priority: "low" as const,
+        dueby: null,
+      },
+    ];
     const saveTickets = vi.fn();
 
     await addHandler(

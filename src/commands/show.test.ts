@@ -5,7 +5,14 @@ describe("showHandler", () => {
   it("displays full ticket details", async () => {
     const log = vi.fn();
     const tickets = [
-      { id: 42, title: "Test Ticket", description: "A test", status: "in_progress" as const, priority: "high" as const, dueby: "2026-07-15T12:00:00.000Z" },
+      {
+        id: 42,
+        title: "Test Ticket",
+        description: "A test",
+        status: "in_progress" as const,
+        priority: "high" as const,
+        dueby: "2026-07-15T12:00:00.000Z",
+      },
     ];
 
     await showHandler("42", { loadTickets: async () => tickets, log });
@@ -21,7 +28,14 @@ describe("showHandler", () => {
   it("shows (none) for missing description and dueby", async () => {
     const log = vi.fn();
     const tickets = [
-      { id: 1, title: "x", description: "", status: "todo" as const, priority: "low" as const, dueby: null },
+      {
+        id: 1,
+        title: "x",
+        description: "",
+        status: "todo" as const,
+        priority: "low" as const,
+        dueby: null,
+      },
     ];
 
     await showHandler("1", { loadTickets: async () => tickets, log });

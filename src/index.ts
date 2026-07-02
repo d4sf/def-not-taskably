@@ -8,11 +8,11 @@ import { Command } from "commander";
 
 import { addHandler } from "./commands/add.js";
 import { listHandler } from "./commands/list.js";
-import { showHandler } from "./commands/show.js";
-import { updateHandler } from "./commands/update.js";
-import { statusHandler } from "./commands/status.js";
 import { removeHandler } from "./commands/remove.js";
 import { searchHandler } from "./commands/search.js";
+import { showHandler } from "./commands/show.js";
+import { statusHandler } from "./commands/status.js";
+import { updateHandler } from "./commands/update.js";
 
 import { loadTickets, saveTickets, validatePriority, validateStatus } from "./tools/index.js";
 

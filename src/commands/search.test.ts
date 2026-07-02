@@ -2,9 +2,30 @@ import { describe, expect, it, vi } from "vitest";
 import { searchHandler } from "./search.js";
 
 const tickets = [
-  { id: 1, title: "Fix login bug", description: "Users cannot log in", status: "todo" as const, priority: "high" as const, dueby: null },
-  { id: 2, title: "Add dark mode", description: "UI improvement", status: "in_progress" as const, priority: "medium" as const, dueby: null },
-  { id: 3, title: "Deploy", description: "Ship to production", status: "done" as const, priority: "low" as const, dueby: "2026-07-20T00:00:00.000Z" },
+  {
+    id: 1,
+    title: "Fix login bug",
+    description: "Users cannot log in",
+    status: "todo" as const,
+    priority: "high" as const,
+    dueby: null,
+  },
+  {
+    id: 2,
+    title: "Add dark mode",
+    description: "UI improvement",
+    status: "in_progress" as const,
+    priority: "medium" as const,
+    dueby: null,
+  },
+  {
+    id: 3,
+    title: "Deploy",
+    description: "Ship to production",
+    status: "done" as const,
+    priority: "low" as const,
+    dueby: "2026-07-20T00:00:00.000Z",
+  },
 ];
 
 describe("searchHandler", () => {
@@ -44,7 +65,10 @@ describe("searchHandler", () => {
   it("supports case-sensitive search", async () => {
     const log = vi.fn();
 
-    await searchHandler({ query: "LOGIN", caseSensitive: true }, { loadTickets: async () => tickets, log });
+    await searchHandler(
+      { query: "LOGIN", caseSensitive: true },
+      { loadTickets: async () => tickets, log },
+    );
 
     expect(log).toHaveBeenCalledWith("No tickets found.");
   });

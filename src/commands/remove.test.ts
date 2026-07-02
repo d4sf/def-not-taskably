@@ -1,46 +1,31 @@
 import { describe, expect, it, vi } from "vitest";
-import { removeHandler } from "./remove";
+import { removeHandler } from "./remove.js";
 
-const tasks = [
-  { id: 1, title: "Task One", priority: "high" as const, done: false },
-  { id: 2, title: "Task Two", priority: "low" as const, done: true },
-  { id: 3, title: "Task Three", priority: "high" as const, done: false },
-];
+describe("removeHandler", () => {
+  it("removes a ticket by id", async () => {
+    const saveTickets = vi.fn();
+    const tickets = [
+      { id: 1, title: "keep", description: "", status: "todo" as const, priority: "low" as const, dueby: null },
+      { id: 2, title: "remove", description: "", status: "todo" as const, priority: "low" as const, dueby: null },
+    ];
 
-describe("remove command", () => {
-  it("deletes the given task", async () => {
-    const log = vi.fn();
-    const saveTasks = vi.fn();
+    await removeHandler("2", { loadTickets: async () => tickets, saveTickets, log: vi.fn() });
 
-    await removeHandler("1", {
-      loadTasks: async () => tasks,
-      saveTasks,
-      log,
-    });
-
-    expect(log).toHaveBeenCalledOnce();
-    expect(log.mock.calls[0][0]).toContain("Removed task 1");
-
-    const saved = saveTasks.mock.calls[0][0];
-
-    expect(saved.length).toBeLessThan(tasks.length);
-    expect(saved).not.toContain("Task One");
+    const saved = saveTickets.mock.calls[0][0];
+    expect(saved).toHaveLength(1);
+    expect(saved[0].id).toBe(1);
   });
 
-  it("exits with error when task not found", async () => {
-    const saveTasks = vi.fn();
-    const log = vi.fn();
-    const processExitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
+  it("fails when ticket not found", async () => {
+    const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await removeHandler("999", {
-      loadTasks: async () => tasks,
-      saveTasks,
-      log,
-    });
+    await removeHandler("999", { loadTickets: async () => [], saveTickets: vi.fn(), log: vi.fn() });
 
-    expect(processExitSpy).toHaveBeenCalledWith(1);
-    expect(saveTasks).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith("No ticket found with id 999");
+    expect(exitSpy).toHaveBeenCalledWith(1);
 
-    processExitSpy.mockRestore();
+    exitSpy.mockRestore();
+    errorSpy.mockRestore();
   });
 });

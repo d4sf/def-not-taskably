@@ -1,71 +1,48 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import type { Priority, PriorityPromptChoice, Task } from "../types.js";
+import type { Priority, PriorityChoice, Status, StatusChoice, Ticket } from "../types.js";
 
-const TASK_FILE = resolve(process.cwd(), ".taskly.json");
+const TICKET_FILE = resolve(process.cwd(), "magnetar.json");
 
-/**
- * Reads and parses the task list from the local `.taskly.json` file.
- *
- * If the file does not exist (ENOENT), it returns an empty array.
- * It maps over the tasks to ensure every task has a 'description' property,
- * providing a default empty string if it's missing from the stored JSON.
- * @returns {Promise<Task[]>} A promise that resolves to the array of tasks.
- */
-export async function loadTasks(): Promise<Task[]> {
+export async function loadTickets(): Promise<Ticket[]> {
   try {
-    const data = await readFile(TASK_FILE, "utf-8");
-    // biome-ignore lint/suspicious/noExplicitAny: JSON.parse result is inherently untyped
-    const tasks = JSON.parse(data) as any[];
-
-    return tasks.map((t) => ({ description: "", ...t })) as Task[];
+    const data = await readFile(TICKET_FILE, "utf-8");
+    const tickets = JSON.parse(data) as Ticket[];
+    return tickets.map((t) => ({ ...t, description: t.description ?? "", dueby: t.dueby ?? null }));
   } catch (error) {
     if (error instanceof Error && (error as { code?: string }).code === "ENOENT") return [];
     throw error;
   }
 }
 
-/**
- * Persists the current task list to the local `.taskly.json` file.
- *
- * @param {Task[]} tasks - The array of task objects to save.
- * @returns {Promise<void>}
- */
-export async function saveTasks(tasks: Task[]): Promise<void> {
-  await writeFile(TASK_FILE, JSON.stringify(tasks, null, 2));
+export async function saveTickets(tickets: Ticket[]): Promise<void> {
+  await writeFile(TICKET_FILE, JSON.stringify(tickets, null, 2));
 }
 
-/**
- * Validates a string input against the allowed task priority levels.
- *
- * @param {string} value - The input value to validate (typically from CLI options).
- * @returns {Priority} The validated priority string.
- * @throws {Error} If the value is not one of 'low', 'medium', or 'high'.
- */
 export function validatePriority(value: string): Priority {
   const allowed: Priority[] = ["low", "medium", "high"];
-
   if (!allowed.includes(value as Priority)) {
     throw new Error(`Priority must be one of: ${allowed.join(", ")}`);
   }
-
   return value as Priority;
 }
 
-export const priorityPromptChoices: PriorityPromptChoice[] = [
-  {
-    name: "High",
-    value: "high",
-    description: "A very important task.",
-  },
-  {
-    name: "Medium",
-    value: "medium",
-    description: "A normal task.",
-  },
-  {
-    name: "Low",
-    value: "low",
-    description: "A not so relevant task.",
-  },
+export function validateStatus(value: string): Status {
+  const allowed: Status[] = ["todo", "in_progress", "done"];
+  if (!allowed.includes(value as Status)) {
+    throw new Error(`Status must be one of: ${allowed.join(", ")}`);
+  }
+  return value as Status;
+}
+
+export const priorityChoices: PriorityChoice[] = [
+  { name: "High", value: "high", description: "Urgent priority" },
+  { name: "Medium", value: "medium", description: "Normal priority" },
+  { name: "Low", value: "low", description: "Low priority" },
+];
+
+export const statusChoices: StatusChoice[] = [
+  { name: "Todo", value: "todo", description: "Not started" },
+  { name: "In Progress", value: "in_progress", description: "Currently working" },
+  { name: "Done", value: "done", description: "Completed" },
 ];

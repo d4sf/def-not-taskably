@@ -15,6 +15,7 @@ describe("addHandler", () => {
         log,
         inputPrompt: vi.fn(),
         selectPrompt: vi.fn(),
+        datePrompt: vi.fn(),
       },
     );
 
@@ -47,6 +48,7 @@ describe("addHandler", () => {
         log: vi.fn(),
         inputPrompt: vi.fn(),
         selectPrompt: vi.fn(),
+        datePrompt: vi.fn(),
       },
     );
 
@@ -72,6 +74,7 @@ describe("addHandler", () => {
         log: vi.fn(),
         inputPrompt,
         selectPrompt,
+        datePrompt: vi.fn(),
       },
     );
 
@@ -105,11 +108,59 @@ describe("addHandler", () => {
         log: vi.fn(),
         inputPrompt: vi.fn(),
         selectPrompt: vi.fn(),
+        datePrompt: vi.fn(),
       },
     );
 
     const saved = saveTickets.mock.calls[0][0];
     expect(saved).toHaveLength(2);
     expect(saved[1].title).toBe("second");
+  });
+
+  it("prompts for dueby in interactive mode", async () => {
+    const saveTickets = vi.fn();
+    const inputPrompt = vi.fn().mockResolvedValueOnce("My Ticket");
+    const selectPrompt = vi.fn().mockResolvedValueOnce("medium");
+    const datePrompt = vi.fn().mockResolvedValueOnce(new Date("2026-07-15T12:00:00.000Z"));
+
+    await addHandler(
+      undefined,
+      {},
+      {
+        loadTickets: async () => [],
+        saveTickets,
+        log: vi.fn(),
+        inputPrompt,
+        selectPrompt,
+        datePrompt,
+      },
+    );
+
+    expect(datePrompt).toHaveBeenCalledTimes(1);
+    const saved = saveTickets.mock.calls[0][0];
+    expect(saved[0].dueby).toBe("2026-07-15T12:00:00.000Z");
+  });
+
+  it("skips dueby when user cancels date prompt", async () => {
+    const saveTickets = vi.fn();
+    const inputPrompt = vi.fn().mockResolvedValueOnce("My Ticket");
+    const selectPrompt = vi.fn().mockResolvedValueOnce("medium");
+    const datePrompt = vi.fn().mockResolvedValueOnce(undefined);
+
+    await addHandler(
+      undefined,
+      {},
+      {
+        loadTickets: async () => [],
+        saveTickets,
+        log: vi.fn(),
+        inputPrompt,
+        selectPrompt,
+        datePrompt,
+      },
+    );
+
+    const saved = saveTickets.mock.calls[0][0];
+    expect(saved[0].dueby).toBeNull();
   });
 });

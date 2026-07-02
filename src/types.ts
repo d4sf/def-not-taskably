@@ -1,9 +1,11 @@
 import type { input, select } from "@inquirer/prompts";
+import type { date } from "./tools/date-prompt.js";
 
 export type Status = "todo" | "in_progress" | "done";
 export type Priority = "low" | "medium" | "high";
 export type InputPromptFunction = typeof input;
 export type SelectPromptFunction = typeof select;
+export type DatePromptFunction = typeof date;
 
 export interface Ticket {
   id: number;
@@ -29,6 +31,7 @@ export interface TicketWriteDeps extends TicketReadDeps {
 export interface AddHandlerDeps extends TicketWriteDeps {
   inputPrompt: InputPromptFunction;
   selectPrompt: SelectPromptFunction;
+  datePrompt: DatePromptFunction;
 }
 
 export interface ListHandlerDeps extends TicketReadDeps {}
@@ -47,7 +50,7 @@ export interface AddOptions {
   description?: string;
   priority?: Priority;
   status?: Status;
-  dueby?: string;
+  dueby?: string | boolean;
 }
 
 export interface ListOptions {

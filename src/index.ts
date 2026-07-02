@@ -14,6 +14,7 @@ import { showHandler } from "./commands/show.js";
 import { statusHandler } from "./commands/status.js";
 import { updateHandler } from "./commands/update.js";
 
+import { date } from "./tools/date-prompt.js";
 import { loadTickets, saveTickets, validatePriority, validateStatus } from "./tools/index.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -51,7 +52,7 @@ ticket
   .option("-d, --description <text>", "description of the ticket")
   .option("-p, --priority [level]", "priority: low, medium, high", validatePriority)
   .option("-s, --status [level]", "status: todo, in_progress, done", validateStatus)
-  .option("-b, --dueby <timestamp>", "due date (ISO 8601 timestamp)")
+  .option("-b, --dueby [timestamp]", "due date (ISO 8601 timestamp)")
   .action(async (title, options) => {
     addHandler(title, options, {
       loadTickets,
@@ -59,6 +60,7 @@ ticket
       log: console.log,
       inputPrompt: input,
       selectPrompt: select,
+      datePrompt: date,
     });
   });
 

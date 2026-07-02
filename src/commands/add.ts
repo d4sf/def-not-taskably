@@ -6,7 +6,7 @@ export async function addHandler(
   options: AddOptions,
   deps: AddHandlerDeps,
 ) {
-  const { inputPrompt, selectPrompt } = deps;
+  const { inputPrompt, selectPrompt, datePrompt } = deps;
 
   const ticketTitle =
     title ||
@@ -27,7 +27,18 @@ export async function addHandler(
           default: "medium",
         }));
   const ticketStatus = options.status ?? "todo";
-  const ticketDueby = options.dueby ?? null;
+  const ticketDueby = await (async () => {
+    if (options.dueby === undefined) {
+      if (title) return null;
+      const d = await datePrompt({ message: "Due date (optional):", default: undefined });
+      return d?.toISOString() ?? null;
+    }
+    if (options.dueby === true) {
+      const d = await datePrompt({ message: "Due date:", default: undefined });
+      return d?.toISOString() ?? null;
+    }
+    return typeof options.dueby === "string" ? options.dueby : null;
+  })();
 
   const newTicket: Ticket = {
     id: Date.now(),

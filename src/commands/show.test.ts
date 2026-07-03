@@ -15,7 +15,11 @@ describe("showHandler", () => {
       },
     ];
 
-    await showHandler("42", { getTickets: () => tickets, getTicketById: (id) => tickets.find((t) => t.id === id), log });
+    await showHandler("42", {
+      getTickets: () => tickets,
+      getTicketById: (id) => tickets.find((t) => t.id === id),
+      log,
+    });
 
     expect(log).toHaveBeenCalledWith("ID: 42");
     expect(log).toHaveBeenCalledWith("Title: Test Ticket");
@@ -38,7 +42,11 @@ describe("showHandler", () => {
       },
     ];
 
-    await showHandler("1", { getTickets: () => tickets, getTicketById: (id) => tickets.find((t) => t.id === id), log });
+    await showHandler("1", {
+      getTickets: () => tickets,
+      getTicketById: (id) => tickets.find((t) => t.id === id),
+      log,
+    });
 
     expect(log).toHaveBeenCalledWith("Description: (none)");
     expect(log).toHaveBeenCalledWith("Due: (none)");
@@ -48,7 +56,11 @@ describe("showHandler", () => {
     const exitSpy = vi.spyOn(process, "exit").mockImplementation(() => undefined as never);
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await showHandler("999", { getTickets: () => [], getTicketById: () => undefined, log: vi.fn() });
+    await showHandler("999", {
+      getTickets: () => [],
+      getTicketById: () => undefined,
+      log: vi.fn(),
+    });
 
     expect(errorSpy).toHaveBeenCalledWith("No ticket found with id 999");
     expect(exitSpy).toHaveBeenCalledWith(1);

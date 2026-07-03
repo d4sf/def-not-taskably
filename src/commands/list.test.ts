@@ -46,7 +46,10 @@ describe("listHandler", () => {
       makeTicket({ id: 3, title: "done item", status: "done" }),
     ];
 
-    await listHandler({ status: "todo" }, { getTickets: () => tickets, getTicketById: vi.fn(), log });
+    await listHandler(
+      { status: "todo" },
+      { getTickets: () => tickets, getTicketById: vi.fn(), log },
+    );
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining("todo item"));
     expect(log).not.toHaveBeenCalledWith(expect.stringContaining("in progress"));
@@ -59,7 +62,10 @@ describe("listHandler", () => {
       makeTicket({ id: 2, title: "low priority", priority: "low" }),
     ];
 
-    await listHandler({ priority: "high" }, { getTickets: () => tickets, getTicketById: vi.fn(), log });
+    await listHandler(
+      { priority: "high" },
+      { getTickets: () => tickets, getTicketById: vi.fn(), log },
+    );
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining("high priority"));
     expect(log).not.toHaveBeenCalledWith(expect.stringContaining("low priority"));

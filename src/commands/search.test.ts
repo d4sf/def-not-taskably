@@ -32,7 +32,10 @@ describe("searchHandler", () => {
   it("searches by text in title and description", async () => {
     const log = vi.fn();
 
-    await searchHandler({ query: "login" }, { getTickets: () => tickets, getTicketById: vi.fn(), log });
+    await searchHandler(
+      { query: "login" },
+      { getTickets: () => tickets, getTicketById: vi.fn(), log },
+    );
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining("Fix login bug"));
     expect(log).not.toHaveBeenCalledWith(expect.stringContaining("Deploy"));
@@ -41,7 +44,10 @@ describe("searchHandler", () => {
   it("searches by id", async () => {
     const log = vi.fn();
 
-    await searchHandler({ query: "3", id: true }, { getTickets: () => tickets, getTicketById: vi.fn(), log });
+    await searchHandler(
+      { query: "3", id: true },
+      { getTickets: () => tickets, getTicketById: vi.fn(), log },
+    );
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining("Deploy"));
   });
@@ -49,7 +55,10 @@ describe("searchHandler", () => {
   it("filters by priority", async () => {
     const log = vi.fn();
 
-    await searchHandler({ query: "", priority: "high" }, { getTickets: () => tickets, getTicketById: vi.fn(), log });
+    await searchHandler(
+      { query: "", priority: "high" },
+      { getTickets: () => tickets, getTicketById: vi.fn(), log },
+    );
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining("Fix login bug"));
   });
@@ -57,7 +66,10 @@ describe("searchHandler", () => {
   it("filters by status", async () => {
     const log = vi.fn();
 
-    await searchHandler({ query: "", status: "done" }, { getTickets: () => tickets, getTicketById: vi.fn(), log });
+    await searchHandler(
+      { query: "", status: "done" },
+      { getTickets: () => tickets, getTicketById: vi.fn(), log },
+    );
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining("Deploy"));
   });
@@ -76,7 +88,10 @@ describe("searchHandler", () => {
   it("shows message when no results", async () => {
     const log = vi.fn();
 
-    await searchHandler({ query: "nonexistent" }, { getTickets: () => tickets, getTicketById: vi.fn(), log });
+    await searchHandler(
+      { query: "nonexistent" },
+      { getTickets: () => tickets, getTicketById: vi.fn(), log },
+    );
 
     expect(log).toHaveBeenCalledWith("No tickets found.");
   });

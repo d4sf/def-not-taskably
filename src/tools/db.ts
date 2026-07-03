@@ -1,5 +1,5 @@
-import Database from "better-sqlite3";
 import { resolve } from "node:path";
+import Database from "better-sqlite3";
 import type { Ticket } from "../types.js";
 
 const dbPath = resolve(process.cwd(), ".magnetar.db");

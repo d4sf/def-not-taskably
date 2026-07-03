@@ -15,7 +15,15 @@ import { statusHandler } from "./commands/status.js";
 import { updateHandler } from "./commands/update.js";
 
 import { date } from "./tools/date-prompt.js";
-import { addTicket, deleteTicket, getTicketById, getTickets, updateTicket, validatePriority, validateStatus } from "./tools/index.js";
+import {
+  addTicket,
+  deleteTicket,
+  getTicketById,
+  getTickets,
+  updateTicket,
+  validatePriority,
+  validateStatus,
+} from "./tools/index.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(await readFile(join(__dirname, "..", "package.json"), "utf8"));
@@ -90,21 +98,44 @@ ticket
   .option("-p, --priority <level>", "priority: low, medium, high", validatePriority)
   .option("-b, --dueby <timestamp>", "due date (ISO 8601 timestamp)")
   .action(async (id, options) =>
-    updateHandler(id, options, { getTickets, getTicketById, addTicket, updateTicket, deleteTicket, log: console.log }),
+    updateHandler(id, options, {
+      getTickets,
+      getTicketById,
+      addTicket,
+      updateTicket,
+      deleteTicket,
+      log: console.log,
+    }),
   );
 
 ticket
   .command("status <id> <status>")
   .description("Change ticket status (todo, in_progress, done)")
   .action(async (id, status) =>
-    statusHandler(id, status, { getTickets, getTicketById, addTicket, updateTicket, deleteTicket, log: console.log }),
+    statusHandler(id, status, {
+      getTickets,
+      getTicketById,
+      addTicket,
+      updateTicket,
+      deleteTicket,
+      log: console.log,
+    }),
   );
 
 ticket
   .command("remove <id>")
   .alias("rm")
   .description("Delete a ticket")
-  .action(async (id) => removeHandler(id, { getTickets, getTicketById, addTicket, updateTicket, deleteTicket, log: console.log }));
+  .action(async (id) =>
+    removeHandler(id, {
+      getTickets,
+      getTicketById,
+      addTicket,
+      updateTicket,
+      deleteTicket,
+      log: console.log,
+    }),
+  );
 
 ticket
   .command("search <query>")

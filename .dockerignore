@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.git/
+.gitignore
+AGENTS.md
+opencode.json
+docs/superpowers/
+*.md

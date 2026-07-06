@@ -135,19 +135,35 @@ dnt ticket search "Bug" --case-sensitive
 
 ## Storage
 
-Tickets are stored in a `magnetar.json` file in the current working directory.
-
-## Testing
-
-```bash
-npm test
-```
+Tickets are stored in a `.magnetar.db` (SQLite) file in the current working directory.
 
 ## Development
 
+### Native (requires Node >= 20.12)
+
 ```bash
+npm install
 npm run dev       # run with tsx
 npm run typecheck # type check only
 npm run lint      # lint with Biome
 npm run build     # compile to dist/
+npm test          # run tests
 ```
+
+### Docker (no Node required)
+
+```bash
+docker compose build
+```
+
+| Comando | Propósito |
+|---------|-----------|
+| `docker compose run --rm dnt` | Ayuda del CLI |
+| `docker compose run --rm dnt ticket list` | Ejecutar CLI (compilado) |
+| `docker compose run --rm dnt tsx src/index.ts ticket list` | Modo dev con tsx |
+| `docker compose run --rm dnt npm test` | Tests |
+| `docker compose run --rm dnt npm run typecheck` | Type check |
+| `docker compose run --rm dnt npm run lint` | Lint |
+| `docker compose run --rm dnt npm run build` | Recompilar |
+
+La base de datos `.magnetar.db` se crea en el directorio actual del host automáticamente.

@@ -19,4 +19,6 @@ RUN npm run build
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
+ENV PATH=/app/node_modules/.bin:$PATH
+
 ENTRYPOINT ["docker-entrypoint.sh"]

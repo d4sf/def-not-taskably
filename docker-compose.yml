@@ -1,0 +1,11 @@
+services:
+  dnt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
+    working_dir: /app
+    environment:
+      - DNT_VERBOSE

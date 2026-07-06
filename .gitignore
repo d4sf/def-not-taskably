@@ -3,6 +3,7 @@ node_modules/
 
 # temporal savedata
 .taskly.json
+.magnetar.db
 
 # agents,  etc
 AGENTS.md

@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.1](https://github.com/d4sf/def-not-taskably/compare/v1.2.0...v1.2.1) (2026-07-07)
+
+
+### Bug Fixes
+
+* ask for description when using the "interactive mode" ([522e8cb](https://github.com/d4sf/def-not-taskably/commit/522e8cbf1a9cfbfdd7090d009a83b2328c2e9c62))
+* ask for description when using the "interactive mode" ([a7de8b3](https://github.com/d4sf/def-not-taskably/commit/a7de8b307cd2b7db39ca74311b9d9a855ee7592e))
+* Dockerfile layer caching and entrypoint script ([79eceab](https://github.com/d4sf/def-not-taskably/commit/79eceabf2635d67aa9b8d7a4464a6b3ff8f157ee))
+
 ## [1.2.0](https://github.com/d4sf/def-not-taskably/compare/v1.1.0...v1.2.0) (2026-07-02)
 
 

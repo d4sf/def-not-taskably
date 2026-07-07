@@ -67,7 +67,10 @@ describe("addHandler", () => {
 
   it("uses interactive prompts when title is not provided", async () => {
     const addTicket = vi.fn();
-    const inputPrompt = vi.fn().mockResolvedValueOnce("Prompted Title");
+    const inputPrompt = vi
+      .fn()
+      .mockResolvedValueOnce("Prompted Title")
+      .mockResolvedValueOnce("A description");
     const selectPrompt = vi.fn().mockResolvedValueOnce("high");
 
     await addHandler(
@@ -86,11 +89,21 @@ describe("addHandler", () => {
       },
     );
 
-    expect(inputPrompt).toHaveBeenCalledTimes(1);
+    expect(inputPrompt).toHaveBeenCalledTimes(2);
+    expect(inputPrompt).toHaveBeenNthCalledWith(1, {
+      message: "Enter the title:",
+      default: "New Ticket",
+      required: true,
+    });
+    expect(inputPrompt).toHaveBeenNthCalledWith(2, {
+      message: "Enter the description:",
+      default: "",
+    });
     expect(selectPrompt).toHaveBeenCalledTimes(1);
 
     const saved = addTicket.mock.calls[0][0];
     expect(saved.title).toBe("Prompted Title");
+    expect(saved.description).toBe("A description");
     expect(saved.priority).toBe("high");
   });
 
@@ -129,7 +142,10 @@ describe("addHandler", () => {
 
   it("prompts for dueby in interactive mode", async () => {
     const addTicket = vi.fn();
-    const inputPrompt = vi.fn().mockResolvedValueOnce("My Ticket");
+    const inputPrompt = vi
+      .fn()
+      .mockResolvedValueOnce("My Ticket")
+      .mockResolvedValueOnce("My description");
     const selectPrompt = vi.fn().mockResolvedValueOnce("medium");
     const datePrompt = vi.fn().mockResolvedValueOnce(new Date("2026-07-15T12:00:00.000Z"));
 
@@ -149,14 +165,16 @@ describe("addHandler", () => {
       },
     );
 
+    expect(inputPrompt).toHaveBeenCalledTimes(2);
     expect(datePrompt).toHaveBeenCalledTimes(1);
     const saved = addTicket.mock.calls[0][0];
+    expect(saved.description).toBe("My description");
     expect(saved.dueby).toBe("2026-07-15T12:00:00.000Z");
   });
 
   it("skips dueby when user cancels date prompt", async () => {
     const addTicket = vi.fn();
-    const inputPrompt = vi.fn().mockResolvedValueOnce("My Ticket");
+    const inputPrompt = vi.fn().mockResolvedValueOnce("My Ticket").mockResolvedValueOnce("");
     const selectPrompt = vi.fn().mockResolvedValueOnce("medium");
     const datePrompt = vi.fn().mockResolvedValueOnce(undefined);
 
@@ -177,6 +195,32 @@ describe("addHandler", () => {
     );
 
     const saved = addTicket.mock.calls[0][0];
+    expect(saved.description).toBe("");
     expect(saved.dueby).toBeNull();
+  });
+
+  it("uses description from options when title is provided", async () => {
+    const addTicket = vi.fn();
+    const inputPrompt = vi.fn();
+
+    await addHandler(
+      "my ticket",
+      { description: "CLI description" },
+      {
+        getTickets: () => [],
+        getTicketById: vi.fn(),
+        addTicket,
+        updateTicket: vi.fn(),
+        deleteTicket: vi.fn(),
+        log: vi.fn(),
+        inputPrompt,
+        selectPrompt: vi.fn(),
+        datePrompt: vi.fn(),
+      },
+    );
+
+    expect(inputPrompt).not.toHaveBeenCalled();
+    const saved = addTicket.mock.calls[0][0];
+    expect(saved.description).toBe("CLI description");
   });
 });

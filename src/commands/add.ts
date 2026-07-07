@@ -16,7 +16,14 @@ export async function addHandler(
       required: true,
     }));
 
-  const ticketDescription = options.description ?? "";
+  const ticketDescription =
+    options.description ??
+    (title
+      ? ""
+      : await inputPrompt({
+          message: "Enter the description:",
+          default: "",
+        }));
   const ticketPriority =
     options.priority ??
     (title
